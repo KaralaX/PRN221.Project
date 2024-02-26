@@ -14,4 +14,9 @@
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Appointments\Commands\" />
+      <Folder Include="Appointments\Queries\" />
+    </ItemGroup>
+
 </Project>

@@ -10,10 +10,21 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, ConfigurationManager configuration)
     {
+        services.AddDbContext<ApplicationDbContext>(options => 
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddIdentityContext(configuration);
+        
+        return services;
+    }
+
+    private static IServiceCollection AddIdentityContext(this IServiceCollection services, ConfigurationManager configuration)
+    {
         services.AddDbContext<IdentityContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("IdentityConnection")));
 
         services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<IdentityContext>();
         
         return services;
