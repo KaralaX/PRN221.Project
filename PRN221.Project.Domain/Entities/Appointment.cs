@@ -17,7 +17,7 @@ public partial class Appointment
     [StringLength(50)]
     public string Status { get; set; } = null!;
     public Guid PatientId { get; set; }
-
+    
     [ForeignKey("PatientId")]
     [InverseProperty("Appointments")]
     public virtual Patient Patient { get; set; } = null!;
