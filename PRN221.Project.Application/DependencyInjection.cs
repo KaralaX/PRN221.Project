@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using PRN221.Project.Application.Common.Behaviours;
 
@@ -14,7 +13,9 @@ public static class DependencyInjection
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-            config.AddOpenBehavior(typeof(ValidationBehaviour<,>), ServiceLifetime.Scoped);
+            config.AddBehavior(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+            config.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            config.AddBehavior(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
         });
 
         return services;

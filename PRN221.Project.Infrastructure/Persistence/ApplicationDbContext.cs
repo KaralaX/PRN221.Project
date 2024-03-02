@@ -1,35 +1,39 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Application.Common.Interfaces;
 using PRN221.Project.Domain.Entities;
+using PRN221.Project.Infrastructure.Identity;
 
 namespace PRN221.Project.Infrastructure.Persistence;
 
-public partial class ApplicationDbContext : DbContext, IApplicationDbContext
+public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
 {
     public ApplicationDbContext()
     {
     }
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
 
-    public virtual DbSet<Appointment> Appointments => Set<Appointment>();
-    public virtual DbSet<AppointmentResult> AppointmentResults { get; set; } = null!;
-    public virtual DbSet<Department> Departments { get; set; } = null!;
-    public virtual DbSet<Doctor> Doctors { get; set; } = null!;
-    public virtual DbSet<MedicalBill> MedicalBills { get; set; } = null!;
-    public virtual DbSet<Patient> Patients { get; set; } = null!;
-    public virtual DbSet<PatientMedicalRecord> PatientMedicalRecords { get; set; } = null!;
-    public virtual DbSet<PersonalInformation> PersonalInformations { get; set; } = null!;
-    public virtual DbSet<Schedule> Schedules { get; set; } = null!;
-    public virtual DbSet<Service> Services { get; set; } = null!;
-    public virtual DbSet<ServiceReview> ServiceReviews { get; set; } = null!;
-    public virtual DbSet<Staff> Staffs { get; set; } = null!;
+    public DbSet<ApplicationUser> Users { get; set; } = null!;
+    public DbSet<Appointment> Appointments => Set<Appointment>();
+    public DbSet<AppointmentResult> AppointmentResults { get; set; } = null!;
+    public DbSet<Department> Departments { get; set; } = null!;
+    public DbSet<Doctor> Doctors { get; set; } = null!;
+    public DbSet<MedicalBill> MedicalBills { get; set; } = null!;
+    public DbSet<Patient> Patients { get; set; } = null!;
+    public DbSet<PatientMedicalRecord> PatientMedicalRecords { get; set; } = null!;
+    public DbSet<PersonalInformation> PersonalInformations { get; set; } = null!;
+    public DbSet<Schedule> Schedules { get; set; } = null!;
+    public DbSet<Service> Services { get; set; } = null!;
+    public DbSet<ServiceReview> ServiceReviews { get; set; } = null!;
+    public DbSet<Staff> Staffs { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+        
         modelBuilder.Entity<Appointment>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
@@ -58,10 +62,7 @@ public partial class ApplicationDbContext : DbContext, IApplicationDbContext
                 .HasConstraintName("FK_AppointmentResults_Appointments");
         });
 
-        modelBuilder.Entity<Department>(entity =>
-        {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-        });
+        modelBuilder.Entity<Department>(entity => { entity.Property(e => e.Id).ValueGeneratedNever(); });
 
         modelBuilder.Entity<Doctor>(entity =>
         {
@@ -71,8 +72,10 @@ public partial class ApplicationDbContext : DbContext, IApplicationDbContext
                 .WithMany(p => p.Doctors)
                 .UsingEntity<Dictionary<string, object>>(
                     "DoctorService",
-                    l => l.HasOne<Service>().WithMany().HasForeignKey("ServiceId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_DoctorServices_Services"),
-                    r => r.HasOne<Doctor>().WithMany().HasForeignKey("DoctorId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_DoctorServices_Doctors"),
+                    l => l.HasOne<Service>().WithMany().HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_DoctorServices_Services"),
+                    r => r.HasOne<Doctor>().WithMany().HasForeignKey("DoctorId").OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_DoctorServices_Doctors"),
                     j =>
                     {
                         j.HasKey("DoctorId", "ServiceId");
@@ -92,10 +95,7 @@ public partial class ApplicationDbContext : DbContext, IApplicationDbContext
                 .HasConstraintName("FK_MedicalBills_Appointments");
         });
 
-        modelBuilder.Entity<Patient>(entity =>
-        {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-        });
+        modelBuilder.Entity<Patient>(entity => { entity.Property(e => e.Id).ValueGeneratedNever(); });
 
         modelBuilder.Entity<PatientMedicalRecord>(entity =>
         {
@@ -192,13 +192,6 @@ public partial class ApplicationDbContext : DbContext, IApplicationDbContext
                 .HasConstraintName("FK_ServiceReview_Services");
         });
 
-        modelBuilder.Entity<Staff>(entity =>
-        {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-        });
-
-        OnModelCreatingPartial(modelBuilder);
+        modelBuilder.Entity<Staff>(entity => { entity.Property(e => e.Id).ValueGeneratedNever(); });
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

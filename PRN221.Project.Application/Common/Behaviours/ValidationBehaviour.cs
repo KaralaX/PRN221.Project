@@ -1,37 +1,35 @@
-﻿using ErrorOr;
-using FluentValidation;
-using MediatR;
+﻿using ValidationException = PRN221.Project.Application.Common.Exceptions.ValidationException;
 
 namespace PRN221.Project.Application.Common.Behaviours;
 
-public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest where TResponse : IErrorOr
+public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : notnull
 {
-    private readonly AbstractValidator<TRequest>? _validator;
+    private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-    public ValidationBehaviour(AbstractValidator<TRequest>? validator = null)
+    public ValidationBehaviour(IEnumerable<IValidator<TRequest>> validators)
     {
-        _validator = validator;
+        _validators = validators;
     }
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken token)
     {
-        if (_validator is null)
-        {
-            return await next();
-        }
+        if (!_validators.Any()) return await next();
 
-        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+        var context = new ValidationContext<TRequest>(request);
 
-        if (validationResult.IsValid)
-        {
-            return await next();
-        }
+        var validationResults = await Task.WhenAll(
+            _validators.Select(v =>
+                v.ValidateAsync(context, token)));
 
-        var errors = validationResult.Errors
-            .ConvertAll(failure => Error.Validation(
-                failure.PropertyName,
-                failure.ErrorMessage));
+        var failures = validationResults
+            .Where(r => r.Errors.Any())
+            .SelectMany(r => r.Errors)
+            .ToList();
 
-        return (dynamic)errors;
+        if (failures.Any())
+            throw new ValidationException(failures);
+        
+        return await next();
     }
 }
