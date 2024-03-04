@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Domain.Entities;
 using PRN221.Project.Infrastructure.Persistence;
 
-namespace PRN221.WebUi.Areas.Doctors
+namespace PRN221.WebUi.Areas.Doctors.Pages
 {
     public class EditModel : PageModel
     {

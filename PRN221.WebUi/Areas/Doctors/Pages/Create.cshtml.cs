@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using PRN221.Project.Domain.Entities;
 using PRN221.Project.Infrastructure.Persistence;
 
-namespace PRN221.WebUi.Areas.Doctors
+namespace PRN221.WebUi.Areas.Doctors.Pages
 {
     public class CreateModel : PageModel
     {
