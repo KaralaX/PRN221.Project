@@ -1,18 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PRN221.Project.Domain.Entities;
-
-public partial class AppointmentResult
+﻿namespace PRN221.Project.Domain.Entities
 {
-    [Key]
-    public Guid AppointmentId { get; set; }
-    [Column(TypeName = "text")]
-    public string? TreatmentPlan { get; set; }
-    [Column(TypeName = "text")]
-    public string? TestResult { get; set; }
+    public partial class AppointmentResult
+    {
+        public Guid AppointmentId { get; set; }
+        public string? TreatmentPlan { get; set; }
+        public string? TestResult { get; set; }
 
-    [ForeignKey("AppointmentId")]
-    [InverseProperty("AppointmentResult")]
-    public virtual Appointment Appointment { get; set; } = null!;
+        public virtual Appointment Appointment { get; set; } = null!;
+    }
 }

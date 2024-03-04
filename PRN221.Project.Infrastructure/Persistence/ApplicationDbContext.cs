@@ -28,15 +28,20 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
     public DbSet<Schedule> Schedules { get; set; } = null!;
     public DbSet<Service> Services { get; set; } = null!;
     public DbSet<ServiceReview> ServiceReviews { get; set; } = null!;
-    public DbSet<Staff> Staffs { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         modelBuilder.Entity<Appointment>(entity =>
         {
+            entity.HasIndex(e => e.PatientId, "IX_Appointments_PatientId");
+
+            entity.HasIndex(e => e.ScheduleId, "IX_Appointments_ScheduleId");
+
             entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.Property(e => e.Status).HasMaxLength(50);
 
             entity.HasOne(d => d.Patient)
                 .WithMany(p => p.Appointments)
@@ -53,7 +58,13 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
 
         modelBuilder.Entity<AppointmentResult>(entity =>
         {
+            entity.HasKey(e => e.AppointmentId);
+
             entity.Property(e => e.AppointmentId).ValueGeneratedNever();
+
+            entity.Property(e => e.TestResult).HasColumnType("text");
+
+            entity.Property(e => e.TreatmentPlan).HasColumnType("text");
 
             entity.HasOne(d => d.Appointment)
                 .WithOne(p => p.AppointmentResult)
@@ -62,11 +73,20 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
                 .HasConstraintName("FK_AppointmentResults_Appointments");
         });
 
-        modelBuilder.Entity<Department>(entity => { entity.Property(e => e.Id).ValueGeneratedNever(); });
+        modelBuilder.Entity<Department>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.Property(e => e.Description).HasMaxLength(100);
+
+            entity.Property(e => e.Name).HasMaxLength(100);
+        });
 
         modelBuilder.Entity<Doctor>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.Property(e => e.UserId).HasMaxLength(450);
 
             entity.HasMany(d => d.Services)
                 .WithMany(p => p.Doctors)
@@ -74,19 +94,25 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
                     "DoctorService",
                     l => l.HasOne<Service>().WithMany().HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_DoctorServices_Services"),
-                    r => r.HasOne<Doctor>().WithMany().HasForeignKey("DoctorId").OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_DoctorServices_Doctors"),
+                    r => r.HasOne<Doctor>().WithMany().HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_DoctorServices_Doctors"),
                     j =>
                     {
                         j.HasKey("DoctorId", "ServiceId");
 
                         j.ToTable("DoctorServices");
+
+                        j.HasIndex(new[] { "ServiceId" }, "IX_DoctorServices_ServiceId");
                     });
         });
 
         modelBuilder.Entity<MedicalBill>(entity =>
         {
+            entity.HasKey(e => e.AppointmentId);
+
             entity.Property(e => e.AppointmentId).ValueGeneratedNever();
+
+            entity.Property(e => e.Price).HasColumnType("money");
 
             entity.HasOne(d => d.Appointment)
                 .WithOne(p => p.MedicalBill)
@@ -95,11 +121,22 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
                 .HasConstraintName("FK_MedicalBills_Appointments");
         });
 
-        modelBuilder.Entity<Patient>(entity => { entity.Property(e => e.Id).ValueGeneratedNever(); });
+        modelBuilder.Entity<Patient>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.Property(e => e.UserId).HasMaxLength(450);
+        });
 
         modelBuilder.Entity<PatientMedicalRecord>(entity =>
         {
+            entity.HasKey(e => e.PatientId);
+
             entity.Property(e => e.PatientId).ValueGeneratedNever();
+
+            entity.Property(e => e.Allergies).HasColumnType("text");
+
+            entity.Property(e => e.Medications).HasColumnType("text");
 
             entity.HasOne(d => d.Patient)
                 .WithOne(p => p.PatientMedicalRecord)
@@ -112,9 +149,17 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
 
-            entity.Property(e => e.FirstName).IsFixedLength();
+            entity.Property(e => e.Address).HasMaxLength(100);
 
-            entity.Property(e => e.LastName).IsFixedLength();
+            entity.Property(e => e.FirstName)
+                .HasMaxLength(50)
+                .IsFixedLength();
+
+            entity.Property(e => e.Gender).HasMaxLength(20);
+
+            entity.Property(e => e.LastName)
+                .HasMaxLength(50)
+                .IsFixedLength();
 
             entity.HasOne(d => d.IdNavigation)
                 .WithOne(p => p.PersonalInformation)
@@ -127,17 +172,17 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
                 .HasForeignKey<PersonalInformation>(d => d.Id)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PersonalInformations_Patients");
-
-            entity.HasOne(d => d.Id2)
-                .WithOne(p => p.PersonalInformation)
-                .HasForeignKey<PersonalInformation>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PersonalInformations_Staffs");
         });
 
         modelBuilder.Entity<Schedule>(entity =>
         {
+            entity.HasIndex(e => e.DoctorId, "IX_Schedules_DoctorId");
+
+            entity.HasIndex(e => e.ServiceId, "IX_Schedules_ServiceId");
+
             entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.Property(e => e.DateTime).HasColumnType("datetime");
 
             entity.HasOne(d => d.Doctor)
                 .WithMany(p => p.Schedules)
@@ -154,7 +199,15 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
 
         modelBuilder.Entity<Service>(entity =>
         {
+            entity.HasIndex(e => e.DepartmentId, "IX_Services_DepartmentId");
+
             entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.Property(e => e.Description).HasMaxLength(100);
+
+            entity.Property(e => e.Name).HasMaxLength(100);
+
+            entity.Property(e => e.Price).HasColumnType("money");
 
             entity.HasOne(d => d.Department)
                 .WithMany(p => p.Services)
@@ -165,7 +218,19 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
 
         modelBuilder.Entity<ServiceReview>(entity =>
         {
+            entity.ToTable("ServiceReview");
+
+            entity.HasIndex(e => e.AppointmentId, "IX_ServiceReview_AppointmentId");
+
+            entity.HasIndex(e => e.DoctorId, "IX_ServiceReview_DoctorId");
+
+            entity.HasIndex(e => e.PatientId, "IX_ServiceReview_PatientId");
+
+            entity.HasIndex(e => e.ServiceId, "IX_ServiceReview_ServiceId");
+
             entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.Property(e => e.Comment).HasMaxLength(500);
 
             entity.HasOne(d => d.Appointment)
                 .WithMany(p => p.ServiceReviews)
@@ -191,7 +256,12 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ServiceReview_Services");
         });
+    }
 
-        modelBuilder.Entity<Staff>(entity => { entity.Property(e => e.Id).ValueGeneratedNever(); });
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+
+        optionsBuilder.UseSqlServer("Server=(local);Database=PRN221.Project;User=sa;Password=sa;");
     }
 }

@@ -32,7 +32,7 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
 
                     b.HasKey("DoctorId", "ServiceId");
 
-                    b.HasIndex("ServiceId");
+                    b.HasIndex(new[] { "ServiceId" }, "IX_DoctorServices_ServiceId");
 
                     b.ToTable("DoctorServices", (string)null);
                 });
@@ -262,9 +262,9 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PatientId");
+                    b.HasIndex(new[] { "PatientId" }, "IX_Appointments_PatientId");
 
-                    b.HasIndex("ScheduleId");
+                    b.HasIndex(new[] { "ScheduleId" }, "IX_Appointments_ScheduleId");
 
                     b.ToTable("Appointments");
                 });
@@ -423,9 +423,9 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DoctorId");
+                    b.HasIndex(new[] { "DoctorId" }, "IX_Schedules_DoctorId");
 
-                    b.HasIndex("ServiceId");
+                    b.HasIndex(new[] { "ServiceId" }, "IX_Schedules_ServiceId");
 
                     b.ToTable("Schedules");
                 });
@@ -443,6 +443,9 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<long?>("Duration")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -456,7 +459,7 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DepartmentId");
+                    b.HasIndex(new[] { "DepartmentId" }, "IX_Services_DepartmentId");
 
                     b.ToTable("Services");
                 });
@@ -494,30 +497,15 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppointmentId");
+                    b.HasIndex(new[] { "AppointmentId" }, "IX_ServiceReview_AppointmentId");
 
-                    b.HasIndex("DoctorId");
+                    b.HasIndex(new[] { "DoctorId" }, "IX_ServiceReview_DoctorId");
 
-                    b.HasIndex("PatientId");
+                    b.HasIndex(new[] { "PatientId" }, "IX_ServiceReview_PatientId");
 
-                    b.HasIndex("ServiceId");
+                    b.HasIndex(new[] { "ServiceId" }, "IX_ServiceReview_ServiceId");
 
-                    b.ToTable("ServiceReview");
-                });
-
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.Staff", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Staffs");
+                    b.ToTable("ServiceReview", (string)null);
                 });
 
             modelBuilder.Entity("PRN221.Project.Infrastructure.Identity.ApplicationUser", b =>
@@ -659,15 +647,7 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_PersonalInformations_Patients");
 
-                    b.HasOne("PRN221.Project.Domain.Entities.Staff", "Id2")
-                        .WithOne("PersonalInformation")
-                        .HasForeignKey("PRN221.Project.Domain.Entities.PersonalInformation", "Id")
-                        .IsRequired()
-                        .HasConstraintName("FK_PersonalInformations_Staffs");
-
                     b.Navigation("Id1");
-
-                    b.Navigation("Id2");
 
                     b.Navigation("IdNavigation");
                 });
@@ -781,11 +761,6 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                     b.Navigation("Schedules");
 
                     b.Navigation("ServiceReviews");
-                });
-
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.Staff", b =>
-                {
-                    b.Navigation("PersonalInformation");
                 });
 #pragma warning restore 612, 618
         }

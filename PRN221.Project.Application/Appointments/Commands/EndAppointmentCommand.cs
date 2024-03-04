@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Application.Common.Interfaces;
 using PRN221.Project.Domain.Enums;
 

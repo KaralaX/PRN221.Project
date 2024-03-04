@@ -1,19 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿namespace PRN221.Project.Domain.Entities;
 
-namespace PRN221.Project.Domain.Entities
+public partial class PatientMedicalRecord
 {
-    public partial class PatientMedicalRecord
-    {
-        [Key]
-        public Guid PatientId { get; set; }
-        [Column(TypeName = "text")]
-        public string? Allergies { get; set; }
-        [Column(TypeName = "text")]
-        public string? Medications { get; set; }
+    public Guid PatientId { get; set; }
+    public string? Allergies { get; set; }
+    public string? Medications { get; set; }
 
-        [ForeignKey("PatientId")]
-        [InverseProperty("PatientMedicalRecord")]
-        public virtual Patient Patient { get; set; } = null!;
-    }
+    public virtual Patient Patient { get; set; } = null!;
 }
