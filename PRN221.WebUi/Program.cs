@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Application;
 using PRN221.Project.Infrastructure;
 using PRN221.Project.Infrastructure.Persistence;
@@ -5,6 +6,10 @@ using PRN221.WebUi;
 
 var builder = WebApplication.CreateBuilder(args);
 {
+    //builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    //        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    //    );
+
     builder.Services
         .AddApplicationServices()
         .AddInfrastructureServices(builder.Configuration)
@@ -22,7 +27,7 @@ var app = builder.Build();
     {
         await app.InitializeDatabaseAsync();
     }
-            
+
     app.UseHttpsRedirection();
     app.UseStaticFiles();
 

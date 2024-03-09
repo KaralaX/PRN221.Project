@@ -9,7 +9,6 @@ public interface IApplicationDbContext
     DbSet<Schedule> Schedules { get; }
     DbSet<Doctor> Doctors { get; }
     DbSet<Patient> Patients { get; }
-    DbSet<Staff> Staffs { get; }
     DbSet<PersonalInformation> PersonalInformations { get; }
     Task<int> SaveChangesAsync(CancellationToken token);
 }

@@ -1,30 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PRN221.Project.Domain.Entities;
-
-public partial class Doctor
+﻿namespace PRN221.Project.Domain.Entities
 {
-    public Doctor()
+    public partial class Doctor
     {
-        Schedules = new HashSet<Schedule>();
-        ServiceReviews = new HashSet<ServiceReview>();
-        Services = new HashSet<Service>();
+        public Doctor()
+        {
+            Schedules = new HashSet<Schedule>();
+            ServiceReviews = new HashSet<ServiceReview>();
+            Services = new HashSet<Service>();
+        }
+
+        public Guid Id { get; set; }
+        public string UserId { get; set; } = null!;
+
+        public virtual PersonalInformation? PersonalInformation { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
+        public virtual ICollection<ServiceReview> ServiceReviews { get; set; }
+
+        public virtual ICollection<Service> Services { get; set; }
     }
-
-    [Key]
-    public Guid Id { get; set; }
-    [StringLength(450)]
-    public string UserId { get; set; } = null!;
-
-    [InverseProperty("IdNavigation")]
-    public virtual PersonalInformation? PersonalInformation { get; set; }
-    [InverseProperty("Doctor")]
-    public virtual ICollection<Schedule> Schedules { get; set; }
-    [InverseProperty("Doctor")]
-    public virtual ICollection<ServiceReview> ServiceReviews { get; set; }
-
-    [ForeignKey("DoctorId")]
-    [InverseProperty("Doctors")]
-    public virtual ICollection<Service> Services { get; set; }
 }

@@ -1,23 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PRN221.Project.Domain.Entities;
-
-public partial class Department
+﻿namespace PRN221.Project.Domain.Entities
 {
-    public Department()
+    public partial class Department
     {
-        Services = new HashSet<Service>();
+        public Department()
+        {
+            Services = new HashSet<Service>();
+        }
+
+        public Guid Id { get; set; }
+        public string Name { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public bool Status { get; set; }
+
+        public virtual ICollection<Service> Services { get; set; }
     }
-
-    [Key]
-    public Guid Id { get; set; }
-    [StringLength(100)]
-    public string Name { get; set; } = null!;
-    [StringLength(100)]
-    public string Description { get; set; } = null!;
-    public bool Status { get; set; }
-
-    [InverseProperty("Department")]
-    public virtual ICollection<Service> Services { get; set; }
 }

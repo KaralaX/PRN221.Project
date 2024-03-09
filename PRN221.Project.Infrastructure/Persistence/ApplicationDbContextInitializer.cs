@@ -80,7 +80,6 @@ public class ApplicationDbContextInitializer
         
         await _roleManager.CreateAsync(new IdentityRole(Roles.Admin));
         await _roleManager.CreateAsync(new IdentityRole(Roles.Patient));
-        await _roleManager.CreateAsync(new IdentityRole(Roles.Staff));
         await _roleManager.CreateAsync(new IdentityRole(Roles.Doctor));
 
         await _userManager.CreateAsync(new ApplicationUser

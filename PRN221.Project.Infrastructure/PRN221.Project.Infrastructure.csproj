@@ -7,6 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Common\**" />
+      <EmbeddedResource Remove="Common\**" />
+      <None Remove="Common\**" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\PRN221.Project.Application\PRN221.Project.Application.csproj" />
     </ItemGroup>
 
@@ -21,7 +27,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Common\Interfaces\" />
       <Folder Include="Persistence\Migrations\" />
     </ItemGroup>
 
