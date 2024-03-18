@@ -1,6 +1,6 @@
 ﻿namespace PRN221.Project.Domain.Entities;
 
-public partial class MedicalBill
+public class MedicalBill
 {
     public Guid AppointmentId { get; set; }
     public decimal? Price { get; set; }

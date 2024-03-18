@@ -77,7 +77,7 @@ public class ApplicationDbContextInitializer
     private async Task TrySeedAsync()
     {
         if (await _roleManager.RoleExistsAsync(Roles.Admin)) return;
-        
+
         await _roleManager.CreateAsync(new IdentityRole(Roles.Admin));
         await _roleManager.CreateAsync(new IdentityRole(Roles.Patient));
         await _roleManager.CreateAsync(new IdentityRole(Roles.Doctor));
@@ -85,10 +85,10 @@ public class ApplicationDbContextInitializer
         await _userManager.CreateAsync(new ApplicationUser
         {
             UserName = _adminOptions.Value.UserName,
-            Email = _adminOptions.Value.Email,
+            Email = _adminOptions.Value.Email
         }, password: _adminOptions.Value.Password);
 
-        var adminUser = _context.Users.FirstOrDefault(x => x.Email == _adminOptions.Value.Email);
+        var adminUser = await _userManager.FindByEmailAsync(_adminOptions.Value.Email);
 
         if (adminUser != null)
         {
@@ -100,7 +100,7 @@ public class ApplicationDbContextInitializer
 public class AdminSettings
 {
     public const string SectionName = "AdminSettings";
-    public string UserName { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
+    public string UserName { get; init; } = null!;
+    public string Email { get; init; } = null!;
+    public string Password { get; init; } = null!;
 }

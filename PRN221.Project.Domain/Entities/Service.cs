@@ -1,11 +1,10 @@
 ﻿namespace PRN221.Project.Domain.Entities;
 
-public partial class Service
+public class Service
 {
     public Service()
     {
-        Schedules = new HashSet<Schedule>();
-        ServiceReviews = new HashSet<ServiceReview>();
+        Appointments = new HashSet<Appointment>();
         Doctors = new HashSet<Doctor>();
     }
 
@@ -18,8 +17,7 @@ public partial class Service
     public long? Duration { get; set; }
 
     public virtual Department Department { get; set; } = null!;
-    public virtual ICollection<Schedule> Schedules { get; set; }
-    public virtual ICollection<ServiceReview> ServiceReviews { get; set; }
+    public virtual ICollection<Appointment> Appointments { get; set; }
 
     public virtual ICollection<Doctor> Doctors { get; set; }
 }

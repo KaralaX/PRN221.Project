@@ -22,7 +22,7 @@ public static class DependencyInjection
         services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 
         services.AddIdentity<ApplicationUser, IdentityRole>(
-                options => { options.SignIn.RequireConfirmedAccount = true; })
+                options => { options.SignIn.RequireConfirmedAccount = false; })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
