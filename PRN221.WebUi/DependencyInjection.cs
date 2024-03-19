@@ -10,7 +10,9 @@ public static class DependencyInjection
         services.AddRazorPages();
 
         services.AddScoped<IUser, CurrentUser>();
-        
+
+        services.ConfigureApplicationCookie(options => options.AccessDeniedPath = "/Identity/Account/AccessDenied");
+
         return services;
     }
 }

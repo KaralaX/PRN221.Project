@@ -13,30 +13,31 @@
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Service[0].Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Service[0].Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Service[0].Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Service[0].Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Service[0].Duration)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Service[0].Department)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Service[0].Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Service[0].Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Service[0].Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Service[0].Price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Service[0].Duration)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Service[0].Department)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Service) {
+    @foreach (var item in Model.Service)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -45,13 +46,14 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
+                @{ var status = item.Status ? "Active" : "Inactive"; }
+                @status
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Duration)
+                @item.Duration minutes
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Department.Description)
@@ -62,6 +64,6 @@
                 <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

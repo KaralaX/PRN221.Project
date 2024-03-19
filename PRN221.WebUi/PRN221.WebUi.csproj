@@ -105,7 +105,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\Departments\Pages\" />
-    <Folder Include="Areas\Doctors\Pages\" />
     <Folder Include="Areas\Services\Pages\" />
   </ItemGroup>
 

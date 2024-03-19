@@ -17,6 +17,6 @@ public sealed class ListDoctorQueryHandler : IRequestHandler<ListDoctorQuery, IQ
 
     public async Task<IQueryable<Doctor>> Handle(ListDoctorQuery request, CancellationToken cancellationToken)
     {
-        return _dbContext.Doctors.Include(x => x.PersonalInformation).AsNoTracking();
+        return _dbContext.Doctors.AsNoTracking();
     }
 }

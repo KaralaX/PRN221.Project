@@ -6,9 +6,13 @@ namespace PRN221.Project.Application.Common.Interfaces;
 public interface IApplicationDbContext
 {
     DbSet<Appointment> Appointments { get; }
+    DbSet<Department> Departments { get; }
     DbSet<Doctor> Doctors { get; }
-    DbSet<Service> Services { get; }
+    DbSet<MedicalBill> MedicalBills { get; }
     DbSet<Patient> Patients { get; }
-    DbSet<PersonalInformation> PersonalInformations { get; }
-    Task<int> SaveChangesAsync(CancellationToken token);
+    DbSet<Staff> Staffs { get; }
+    DbSet<PatientMedicalRecord> PatientMedicalRecords { get; }
+    DbSet<Service> Services { get; }
+    DbSet<ServiceReview> ServiceReviews { get; }
+    Task<int> SaveChangesAsync(CancellationToken token = default);
 }

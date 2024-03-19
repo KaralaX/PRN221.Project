@@ -1,45 +1,43 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using PRN221.Project.Application.Common.Interfaces;
+using PRN221.Project.Domain.Constant;
 using PRN221.Project.Domain.Entities;
-using PRN221.Project.Infrastructure.Persistence;
 
-namespace PRN221.WebUi.Areas.Departments.Pages
+namespace PRN221.WebUi.Areas.Departments.Pages;
+
+[Authorize(Roles = Roles.Admin)]
+public class CreateModel : PageModel
 {
-    public class CreateModel : PageModel
+    private readonly IApplicationDbContext _context;
+
+    public CreateModel(IApplicationDbContext context)
     {
-        private readonly PRN221.Project.Infrastructure.Persistence.ApplicationDbContext _context;
+        _context = context;
+    }
 
-        public CreateModel(PRN221.Project.Infrastructure.Persistence.ApplicationDbContext context)
-        {
-            _context = context;
-        }
+    public IActionResult OnGet()
+    {
+        return Page();
+    }
 
-        public IActionResult OnGet()
+    [BindProperty]
+    public Department Department { get; set; } = default!;
+        
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid)
         {
             return Page();
         }
-
-        [BindProperty]
-        public Department Department { get; set; } = default!;
         
+        _context.Departments.Add(Department);
+        
+        await _context.SaveChangesAsync();
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
-        public async Task<IActionResult> OnPostAsync()
-        {
-          if (!ModelState.IsValid || _context.Departments == null || Department == null)
-            {
-                return Page();
-            }
-
-            _context.Departments.Add(Department);
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage("./Index");
-        }
+        return RedirectToPage("./Index");
     }
 }

@@ -274,11 +274,11 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("ServiceId");
+                    b.HasIndex(new[] { "DoctorId" }, "IX_Appointments_DoctorId");
 
                     b.HasIndex(new[] { "PatientId" }, "IX_Appointments_PatientId");
+
+                    b.HasIndex(new[] { "ServiceId" }, "IX_Appointments_ServiceId");
 
                     b.ToTable("Appointments");
                 });
@@ -314,6 +314,27 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("(newid())");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("Dob")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nchar(50)")
+                        .IsFixedLength();
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nchar(50)")
+                        .IsFixedLength();
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -352,6 +373,27 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("(newid())");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("Dob")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nchar(50)")
+                        .IsFixedLength();
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nchar(50)")
+                        .IsFixedLength();
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -393,42 +435,9 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                     b.HasKey("PatientId")
                         .HasName("PK_PatientMedicalRecords_1");
 
-                    b.HasIndex("UpdatedByStaff");
+                    b.HasIndex(new[] { "UpdatedByStaff" }, "IX_PatientMedicalRecords_UpdatedByStaff");
 
                     b.ToTable("PatientMedicalRecords");
-                });
-
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.PersonalInformation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("(newid())");
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("Dob")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FirstName")
-                        .HasMaxLength(50)
-                        .HasColumnType("nchar(50)")
-                        .IsFixedLength();
-
-                    b.Property<string>("Gender")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("LastName")
-                        .HasMaxLength(50)
-                        .HasColumnType("nchar(50)")
-                        .IsFixedLength();
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PersonalInformations");
                 });
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Service", b =>
@@ -498,6 +507,27 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("(newid())");
 
+                    b.Property<string>("Address")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("Dob")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nchar(50)")
+                        .IsFixedLength();
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nchar(50)")
+                        .IsFixedLength();
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasMaxLength(450)
@@ -505,7 +535,7 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Staff");
+                    b.ToTable("Staffs");
                 });
 
             modelBuilder.Entity("PRN221.Project.Infrastructure.Identity.ApplicationUser", b =>
@@ -637,33 +667,6 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                     b.Navigation("UpdatedByStaffNavigation");
                 });
 
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.PersonalInformation", b =>
-                {
-                    b.HasOne("PRN221.Project.Domain.Entities.Doctor", "IdNavigation")
-                        .WithOne("PersonalInformation")
-                        .HasForeignKey("PRN221.Project.Domain.Entities.PersonalInformation", "Id")
-                        .IsRequired()
-                        .HasConstraintName("FK_PersonalInformations_Doctors1");
-
-                    b.HasOne("PRN221.Project.Domain.Entities.Patient", "Id1")
-                        .WithOne("PersonalInformation")
-                        .HasForeignKey("PRN221.Project.Domain.Entities.PersonalInformation", "Id")
-                        .IsRequired()
-                        .HasConstraintName("FK_PersonalInformations_Patients1");
-
-                    b.HasOne("PRN221.Project.Domain.Entities.Staff", "Id2")
-                        .WithOne("PersonalInformation")
-                        .HasForeignKey("PRN221.Project.Domain.Entities.PersonalInformation", "Id")
-                        .IsRequired()
-                        .HasConstraintName("FK_PersonalInformations_Staffs");
-
-                    b.Navigation("Id1");
-
-                    b.Navigation("Id2");
-
-                    b.Navigation("IdNavigation");
-                });
-
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Service", b =>
                 {
                     b.HasOne("PRN221.Project.Domain.Entities.Department", "Department")
@@ -701,8 +704,6 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Doctor", b =>
                 {
                     b.Navigation("Appointments");
-
-                    b.Navigation("PersonalInformation");
                 });
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Patient", b =>
@@ -710,8 +711,6 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("PatientMedicalRecord");
-
-                    b.Navigation("PersonalInformation");
                 });
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Service", b =>
@@ -722,8 +721,6 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Staff", b =>
                 {
                     b.Navigation("PatientMedicalRecords");
-
-                    b.Navigation("PersonalInformation");
                 });
 #pragma warning restore 612, 618
         }

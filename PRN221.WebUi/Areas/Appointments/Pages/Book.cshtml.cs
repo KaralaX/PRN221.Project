@@ -35,7 +35,7 @@ public class Book : PageModel
 
         ViewData["Doctors"] = doctors.Select(x => new SelectListItem
         {
-            Text = $"{x.PersonalInformation.FirstName} {x.PersonalInformation.LastName}",
+            Text = $"{x.FirstName} {x.LastName}",
             Value = x.Id.ToString()
         }).ToList();
 
@@ -46,6 +46,8 @@ public class Book : PageModel
         }).ToList();
     }
 
-
-    public List<>
+    public void OnPostAsync()
+    {
+        
+    }
 }

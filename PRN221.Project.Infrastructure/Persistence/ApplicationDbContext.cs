@@ -18,14 +18,14 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
 
     public DbSet<ApplicationUser> Users { get; set; } = null!;
     public DbSet<Appointment> Appointments => Set<Appointment>();
-    public DbSet<Department> Departments { get; set; } = null!;
-    public DbSet<Doctor> Doctors { get; set; } = null!;
-    public DbSet<MedicalBill> MedicalBills { get; set; } = null!;
-    public DbSet<Patient> Patients { get; set; } = null!;
-    public DbSet<PatientMedicalRecord> PatientMedicalRecords { get; set; } = null!;
-    public DbSet<PersonalInformation> PersonalInformations { get; set; } = null!;
-    public DbSet<Service> Services { get; set; } = null!;
-    public DbSet<ServiceReview> ServiceReviews { get; set; } = null!;
+    public DbSet<Department> Departments => Set<Department>();
+    public DbSet<Doctor> Doctors => Set<Doctor>();
+    public DbSet<MedicalBill> MedicalBills => Set<MedicalBill>();
+    public DbSet<Patient> Patients => Set<Patient>();
+    public DbSet<Staff> Staffs => Set<Staff>();
+    public DbSet<PatientMedicalRecord> PatientMedicalRecords => Set<PatientMedicalRecord>();
+    public DbSet<Service> Services => Set<Service>();
+    public DbSet<ServiceReview> ServiceReviews => Set<ServiceReview>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -34,7 +34,11 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
         
         modelBuilder.Entity<Appointment>(entity =>
         {
+            entity.HasIndex(e => e.DoctorId, "IX_Appointments_DoctorId");
+
             entity.HasIndex(e => e.PatientId, "IX_Appointments_PatientId");
+
+            entity.HasIndex(e => e.ServiceId, "IX_Appointments_ServiceId");
 
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
@@ -73,6 +77,18 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
             modelBuilder.Entity<Doctor>(entity =>
             {
                 entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.Address).HasMaxLength(100);
+
+                entity.Property(e => e.FirstName)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Gender).HasMaxLength(20);
+
+                entity.Property(e => e.LastName)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
 
                 entity.Property(e => e.UserId).HasMaxLength(450);
 
@@ -115,6 +131,18 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
             {
                 entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
+                entity.Property(e => e.Address).HasMaxLength(100);
+
+                entity.Property(e => e.FirstName)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Gender).HasMaxLength(20);
+
+                entity.Property(e => e.LastName)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
+
                 entity.Property(e => e.UserId).HasMaxLength(450);
             });
 
@@ -122,6 +150,8 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
             {
                 entity.HasKey(e => e.PatientId)
                     .HasName("PK_PatientMedicalRecords_1");
+
+                entity.HasIndex(e => e.UpdatedByStaff, "IX_PatientMedicalRecords_UpdatedByStaff");
 
                 entity.Property(e => e.PatientId).HasDefaultValueSql("(newid())");
 
@@ -143,41 +173,6 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
                     .WithMany(p => p.PatientMedicalRecords)
                     .HasForeignKey(d => d.UpdatedByStaff)
                     .HasConstraintName("FK_PatientMedicalRecords_Staffs");
-            });
-
-            modelBuilder.Entity<PersonalInformation>(entity =>
-            {
-                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
-
-                entity.Property(e => e.Address).HasMaxLength(100);
-
-                entity.Property(e => e.FirstName)
-                    .HasMaxLength(50)
-                    .IsFixedLength();
-
-                entity.Property(e => e.Gender).HasMaxLength(20);
-
-                entity.Property(e => e.LastName)
-                    .HasMaxLength(50)
-                    .IsFixedLength();
-
-                entity.HasOne(d => d.IdNavigation)
-                    .WithOne(p => p.PersonalInformation)
-                    .HasForeignKey<PersonalInformation>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_PersonalInformations_Doctors1");
-
-                entity.HasOne(d => d.Id1)
-                    .WithOne(p => p.PersonalInformation)
-                    .HasForeignKey<PersonalInformation>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_PersonalInformations_Patients1");
-
-                entity.HasOne(d => d.Id2)
-                    .WithOne(p => p.PersonalInformation)
-                    .HasForeignKey<PersonalInformation>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_PersonalInformations_Staffs");
             });
 
             modelBuilder.Entity<Service>(entity =>
@@ -223,6 +218,18 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
             modelBuilder.Entity<Staff>(entity =>
             {
                 entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.Address).HasMaxLength(100);
+
+                entity.Property(e => e.FirstName)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Gender).HasMaxLength(20);
+
+                entity.Property(e => e.LastName)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
 
                 entity.Property(e => e.UserId).HasMaxLength(450);
             });
