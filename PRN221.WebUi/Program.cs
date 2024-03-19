@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Application;
 using PRN221.Project.Infrastructure;
 using PRN221.Project.Infrastructure.Persistence;

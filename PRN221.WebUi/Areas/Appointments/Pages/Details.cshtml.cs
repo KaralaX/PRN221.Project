@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Domain.Entities;
 using PRN221.Project.Infrastructure.Persistence;
 
-namespace PRN221.WebUi.Areas.Doctors.Pages
+namespace PRN221.WebUi.Areas.Appointments.Pages
 {
     public class DetailsModel : PageModel
     {
@@ -19,23 +19,23 @@ namespace PRN221.WebUi.Areas.Doctors.Pages
             _context = context;
         }
 
-      public Doctor Doctor { get; set; } = default!; 
+      public Appointment Appointment { get; set; } = default!; 
 
         public async Task<IActionResult> OnGetAsync(Guid? id)
         {
-            if (id == null || _context.Doctors == null)
+            if (id == null || _context.Appointments == null)
             {
                 return NotFound();
             }
 
-            var doctor = await _context.Doctors.FirstOrDefaultAsync(m => m.Id == id);
-            if (doctor == null)
+            var appointment = await _context.Appointments.FirstOrDefaultAsync(m => m.Id == id);
+            if (appointment == null)
             {
                 return NotFound();
             }
             else 
             {
-                Doctor = doctor;
+                Appointment = appointment;
             }
             return Page();
         }

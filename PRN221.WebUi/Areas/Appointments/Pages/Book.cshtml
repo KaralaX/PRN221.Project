@@ -1,0 +1,44 @@
+﻿@page
+@using PRN221.Project.Domain.Entities
+@model PRN221.WebUi.Areas.Appointments.Pages.Book
+
+@{
+    ViewData["Title"] = "Book Appointment";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Book an Appointment</h1>
+<hr />
+
+<div class="row">
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Appointment.PatientId" class="control-label"></label>
+            <select asp-for="Appointment.PatientId" class="form-control" asp-items="ViewBag.Patients"></select>
+        </div>
+        <div class="form-group">
+            <label asp-for="Appointment.DoctorId" class="control-label"></label>
+            <select asp-for="Appointment.DoctorId" class="form-control" asp-items="ViewBag.Doctors">
+            </select>
+        </div>
+        <div class="form-group">
+            <label asp-for="Appointment.ServiceId" class="control-label"></label>
+            <select asp-for="Appointment.ServiceId" class="form-control" asp-items="ViewBag.Services">
+            </select>
+        </div>
+        <div class="form-group">
+            <label asp-for="Appointment.Date" class="control-label"></label>
+            <input asp-for="Appointment.Date" class="form-control" />
+            <span asp-validation-for="Appointment.Date" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Appointment.Time" class="control-label"></label>
+            <input asp-for="Appointment.Time" class="form-control" />
+            <span asp-validation-for="Appointment.Time" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    </form>
+</div>

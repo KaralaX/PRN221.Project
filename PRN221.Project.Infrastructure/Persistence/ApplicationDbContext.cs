@@ -228,10 +228,10 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
             });
     }
 
-    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    // {
-    //     base.OnConfiguring(optionsBuilder);
-    //
-    //     optionsBuilder.UseSqlServer("Server=(local);Database=PRN221.Project;User=sa;Password=12345678;");
-    // }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+    
+        optionsBuilder.UseSqlServer("Server=(local);Database=PRN221.Project;User=sa;Password=sa;");
+    }
 }

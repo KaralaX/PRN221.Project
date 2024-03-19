@@ -1,0 +1,68 @@
+@page
+@model PRN221.WebUi.Areas.Appointments.Pages.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Appointment[0].Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Appointment[0].Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Appointment[0].Time)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Appointment[0].Doctor)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Appointment[0].Patient)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Appointment[0].Service)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Appointment)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Doctor.UserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Patient.UserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Service.Description)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

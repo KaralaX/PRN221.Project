@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Domain.Entities;
 using PRN221.Project.Infrastructure.Persistence;
 
-namespace PRN221.WebUi.Areas.Doctors.Pages
+namespace PRN221.WebUi.Areas.Services.Pages
 {
     public class IndexModel : PageModel
     {
@@ -19,13 +19,14 @@ namespace PRN221.WebUi.Areas.Doctors.Pages
             _context = context;
         }
 
-        public IList<Doctor> Doctor { get;set; } = default!;
+        public IList<Service> Service { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            if (_context.Doctors != null)
+            if (_context.Services != null)
             {
-                Doctor = await _context.Doctors.ToListAsync();
+                Service = await _context.Services
+                .Include(s => s.Department).ToListAsync();
             }
         }
     }

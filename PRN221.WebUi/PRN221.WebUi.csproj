@@ -70,6 +70,20 @@
     <_ContentIncludedByDefault Remove="Areas\Patient\Pages\Index.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Patient\_ViewImports.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Patient\_ViewStart.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Doctors\Pages\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Doctors\Pages\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Doctors\Pages\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Doctors\Pages\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Doctors\Pages\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Doctors\_ViewImports.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Doctors\_ViewStart.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Departments\Pages\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Departments\Pages\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Departments\Pages\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Departments\Pages\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Departments\Pages\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Departments\_ViewImports.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Departments\_ViewStart.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -87,6 +101,12 @@
     <None Include="wwwroot\lib\waypoints\waypoints.min.js" />
     <None Include="wwwroot\lib\wow\wow.js" />
     <None Include="wwwroot\lib\wow\wow.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Departments\Pages\" />
+    <Folder Include="Areas\Doctors\Pages\" />
+    <Folder Include="Areas\Services\Pages\" />
   </ItemGroup>
 
 </Project>
