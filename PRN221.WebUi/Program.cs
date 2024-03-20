@@ -27,6 +27,9 @@ var app = builder.Build();
     app.UseStaticFiles();
 
     app.UseRouting();
+
+    app.UseSession();
+    
     app.UseAuthentication();
 
     app.UseAuthorization();

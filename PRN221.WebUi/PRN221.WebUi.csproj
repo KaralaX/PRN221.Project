@@ -84,6 +84,7 @@
     <_ContentIncludedByDefault Remove="Areas\Departments\Pages\Index.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Departments\_ViewImports.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Departments\_ViewStart.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Users\Pages\Create.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -105,7 +106,9 @@
 
   <ItemGroup>
     <Folder Include="Areas\Departments\Pages\" />
+    <Folder Include="Areas\Doctors\Pages\" />
     <Folder Include="Areas\Services\Pages\" />
+    <Folder Include="Areas\Staffs\Pages\" />
   </ItemGroup>
 
 </Project>

@@ -14,9 +14,7 @@ public class Doctor
     public string? LastName { get; set; }
     public DateTime? Dob { get; set; }
     public string? Gender { get; set; }
-    
     public string UserId { get; set; } = null!;
     public virtual ICollection<Appointment> Appointments { get; set; }
-
     public virtual ICollection<Service> Services { get; set; }
 }

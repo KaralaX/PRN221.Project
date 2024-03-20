@@ -16,12 +16,12 @@
             <select asp-for="Appointment.PatientId" class="form-control" asp-items="ViewBag.Patients" readonly></select>
         </div>
         <div class="form-group">
-            <label asp-for="Appointment.DoctorId" class="control-label"></label>
+            <label asp-for="Appointment.DoctorId" class="control-label">Doctor</label>
             <select asp-for="Appointment.DoctorId" class="form-control" asp-items="ViewBag.Doctors">
             </select>
         </div>
         <div class="form-group">
-            <label asp-for="Appointment.ServiceId" class="control-label"></label>
+            <label asp-for="Appointment.ServiceId" class="control-label">Service</label>
             <select asp-for="Appointment.ServiceId" class="form-control" asp-items="ViewBag.Services">
             </select>
         </div>

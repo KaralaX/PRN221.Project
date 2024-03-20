@@ -1,12 +1,12 @@
 @page
-@model PRN221.WebUi.Areas.Services.Pages.IndexModel
+@model PRN221.WebUi.Areas.Doctors.Pages.IndexModel
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<h1>Services</h1>
+<h1>Manage Doctors</h1>
 
 <p>
     <a asp-page="Create">Create New</a>
@@ -15,48 +15,47 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Service[0].Name)
+            @Html.DisplayNameFor(model => model.Doctor[0].UserId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Service[0].Description)
+            @Html.DisplayNameFor(model => model.Doctor[0].Address)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Service[0].Status)
+            @Html.DisplayNameFor(model => model.Doctor[0].FirstName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Service[0].Price)
+            @Html.DisplayNameFor(model => model.Doctor[0].LastName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Service[0].Duration)
+            @Html.DisplayNameFor(model => model.Doctor[0].Dob)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Service[0].Department)
+            @Html.DisplayNameFor(model => model.Doctor[0].Gender)
         </th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model.Service)
+    @foreach (var item in Model.Doctor)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.UserId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
+                @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
-                @{ var status = item.Status ? "Active" : "Inactive"; }
-                @status
+                @Html.DisplayFor(modelItem => item.FirstName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Price)
+                @Html.DisplayFor(modelItem => item.LastName)
             </td>
             <td>
-                @item.Duration minutes
+                @Html.DisplayFor(modelItem => item.Dob)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Department.Description)
+                @Html.DisplayFor(modelItem => item.Gender)
             </td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |

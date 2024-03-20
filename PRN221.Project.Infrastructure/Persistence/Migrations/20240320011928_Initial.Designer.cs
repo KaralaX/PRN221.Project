@@ -12,8 +12,8 @@ using PRN221.Project.Infrastructure.Persistence;
 namespace PRN221.Project.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240304165919_UpdateDb2")]
-    partial class UpdateDb2
+    [Migration("20240320011928_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,10 +27,14 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("DoctorService", b =>
                 {
                     b.Property<Guid>("DoctorId")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
 
                     b.Property<Guid>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
 
                     b.HasKey("DoctorId", "ServiceId");
 
@@ -246,51 +250,47 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Appointment", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("DoctorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("PatientId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ScheduleId")
+                    b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ScheduledDateTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
+
                     b.HasKey("Id");
+
+                    b.HasIndex(new[] { "DoctorId" }, "IX_Appointments_DoctorId");
 
                     b.HasIndex(new[] { "PatientId" }, "IX_Appointments_PatientId");
 
-                    b.HasIndex(new[] { "ScheduleId" }, "IX_Appointments_ScheduleId");
+                    b.HasIndex(new[] { "ServiceId" }, "IX_Appointments_ServiceId");
 
                     b.ToTable("Appointments");
-                });
-
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.AppointmentResult", b =>
-                {
-                    b.Property<Guid>("AppointmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("TestResult")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TreatmentPlan")
-                        .HasColumnType("text");
-
-                    b.HasKey("AppointmentId");
-
-                    b.ToTable("AppointmentResults");
                 });
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Department", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -313,72 +313,9 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Doctor", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Doctors");
-                });
-
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.MedicalBill", b =>
-                {
-                    b.Property<Guid>("AppointmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreatedDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("money");
-
-                    b.Property<DateTime?>("UpdatedDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("AppointmentId");
-
-                    b.ToTable("MedicalBills");
-                });
-
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.Patient", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Patients");
-                });
-
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.PatientMedicalRecord", b =>
-                {
-                    b.Property<Guid>("PatientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Allergies")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Medications")
-                        .HasColumnType("text");
-
-                    b.HasKey("PatientId");
-
-                    b.ToTable("PatientMedicalRecords");
-                });
-
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.PersonalInformation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
 
                     b.Property<string>("Address")
                         .HasMaxLength(100)
@@ -401,41 +338,116 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                         .HasColumnType("nchar(50)")
                         .IsFixedLength();
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("PersonalInformations");
+                    b.ToTable("Doctors");
                 });
 
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.Schedule", b =>
+            modelBuilder.Entity("PRN221.Project.Domain.Entities.MedicalBill", b =>
+                {
+                    b.Property<Guid>("AppointmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
+
+                    b.Property<DateTime?>("CreatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("money");
+
+                    b.Property<DateTime?>("UpdatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("AppointmentId");
+
+                    b.ToTable("MedicalBills");
+                });
+
+            modelBuilder.Entity("PRN221.Project.Domain.Entities.Patient", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
 
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime");
+                    b.Property<string>("Address")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid>("DoctorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<DateTime?>("Dob")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("NumAppointment")
-                        .HasColumnType("int");
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nchar(50)")
+                        .IsFixedLength();
 
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Gender")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nchar(50)")
+                        .IsFixedLength();
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "DoctorId" }, "IX_Schedules_DoctorId");
+                    b.ToTable("Patients");
+                });
 
-                    b.HasIndex(new[] { "ServiceId" }, "IX_Schedules_ServiceId");
+            modelBuilder.Entity("PRN221.Project.Domain.Entities.PatientMedicalRecord", b =>
+                {
+                    b.Property<Guid>("PatientId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
 
-                    b.ToTable("Schedules");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("date");
+
+                    b.Property<byte[]>("FileContent")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("FileName")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid?>("UpdatedByStaff")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("PatientId")
+                        .HasName("PK_PatientMedicalRecords_1");
+
+                    b.HasIndex(new[] { "UpdatedByStaff" }, "IX_PatientMedicalRecords_UpdatedByStaff");
+
+                    b.ToTable("PatientMedicalRecords");
                 });
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Service", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
 
                     b.Property<Guid>("DepartmentId")
                         .HasColumnType("uniqueidentifier");
@@ -468,46 +480,64 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.ServiceReview", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Comment")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
-                    b.Property<DateTime>("CreatedDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("DoctorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("PatientId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<DateTime?>("CreatedDateTime")
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<DateTime?>("UpdatedDateTime")
+                        .HasColumnType("datetime");
 
-                    b.Property<DateTime>("UpdatedDateTime")
+                    b.HasKey("AppointmentId");
+
+                    b.ToTable("ServiceReview", (string)null);
+                });
+
+            modelBuilder.Entity("PRN221.Project.Domain.Entities.Staff", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("Dob")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nchar(50)")
+                        .IsFixedLength();
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nchar(50)")
+                        .IsFixedLength();
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "AppointmentId" }, "IX_ServiceReview_AppointmentId");
-
-                    b.HasIndex(new[] { "DoctorId" }, "IX_ServiceReview_DoctorId");
-
-                    b.HasIndex(new[] { "PatientId" }, "IX_ServiceReview_PatientId");
-
-                    b.HasIndex(new[] { "ServiceId" }, "IX_ServiceReview_ServiceId");
-
-                    b.ToTable("ServiceReview", (string)null);
+                    b.ToTable("Staffs");
                 });
 
             modelBuilder.Entity("PRN221.Project.Infrastructure.Identity.ApplicationUser", b =>
@@ -585,32 +615,29 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Appointment", b =>
                 {
+                    b.HasOne("PRN221.Project.Domain.Entities.Doctor", "Doctor")
+                        .WithMany("Appointments")
+                        .HasForeignKey("DoctorId")
+                        .IsRequired()
+                        .HasConstraintName("FK_Appointments_Doctors");
+
                     b.HasOne("PRN221.Project.Domain.Entities.Patient", "Patient")
                         .WithMany("Appointments")
                         .HasForeignKey("PatientId")
                         .IsRequired()
                         .HasConstraintName("FK_Appointments_Patients");
 
-                    b.HasOne("PRN221.Project.Domain.Entities.Schedule", "Schedule")
+                    b.HasOne("PRN221.Project.Domain.Entities.Service", "Service")
                         .WithMany("Appointments")
-                        .HasForeignKey("ScheduleId")
+                        .HasForeignKey("ServiceId")
                         .IsRequired()
-                        .HasConstraintName("FK_Appointments_Schedules");
+                        .HasConstraintName("FK_Appointments_Services");
+
+                    b.Navigation("Doctor");
 
                     b.Navigation("Patient");
 
-                    b.Navigation("Schedule");
-                });
-
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.AppointmentResult", b =>
-                {
-                    b.HasOne("PRN221.Project.Domain.Entities.Appointment", "Appointment")
-                        .WithOne("AppointmentResult")
-                        .HasForeignKey("PRN221.Project.Domain.Entities.AppointmentResult", "AppointmentId")
-                        .IsRequired()
-                        .HasConstraintName("FK_AppointmentResults_Appointments");
-
-                    b.Navigation("Appointment");
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.MedicalBill", b =>
@@ -632,45 +659,14 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_PatientMedicalRecords_Patients");
 
+                    b.HasOne("PRN221.Project.Domain.Entities.Staff", "UpdatedByStaffNavigation")
+                        .WithMany("PatientMedicalRecords")
+                        .HasForeignKey("UpdatedByStaff")
+                        .HasConstraintName("FK_PatientMedicalRecords_Staffs");
+
                     b.Navigation("Patient");
-                });
 
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.PersonalInformation", b =>
-                {
-                    b.HasOne("PRN221.Project.Domain.Entities.Doctor", "IdNavigation")
-                        .WithOne("PersonalInformation")
-                        .HasForeignKey("PRN221.Project.Domain.Entities.PersonalInformation", "Id")
-                        .IsRequired()
-                        .HasConstraintName("FK_PersonalInformations_Doctors");
-
-                    b.HasOne("PRN221.Project.Domain.Entities.Patient", "Id1")
-                        .WithOne("PersonalInformation")
-                        .HasForeignKey("PRN221.Project.Domain.Entities.PersonalInformation", "Id")
-                        .IsRequired()
-                        .HasConstraintName("FK_PersonalInformations_Patients");
-
-                    b.Navigation("Id1");
-
-                    b.Navigation("IdNavigation");
-                });
-
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.Schedule", b =>
-                {
-                    b.HasOne("PRN221.Project.Domain.Entities.Doctor", "Doctor")
-                        .WithMany("Schedules")
-                        .HasForeignKey("DoctorId")
-                        .IsRequired()
-                        .HasConstraintName("FK_Schedules_Doctors");
-
-                    b.HasOne("PRN221.Project.Domain.Entities.Service", "Service")
-                        .WithMany("Schedules")
-                        .HasForeignKey("ServiceId")
-                        .IsRequired()
-                        .HasConstraintName("FK_Schedules_Services");
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("Service");
+                    b.Navigation("UpdatedByStaffNavigation");
                 });
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Service", b =>
@@ -687,45 +683,19 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("PRN221.Project.Domain.Entities.ServiceReview", b =>
                 {
                     b.HasOne("PRN221.Project.Domain.Entities.Appointment", "Appointment")
-                        .WithMany("ServiceReviews")
-                        .HasForeignKey("AppointmentId")
+                        .WithOne("ServiceReview")
+                        .HasForeignKey("PRN221.Project.Domain.Entities.ServiceReview", "AppointmentId")
                         .IsRequired()
                         .HasConstraintName("FK_ServiceReview_Appointments");
 
-                    b.HasOne("PRN221.Project.Domain.Entities.Doctor", "Doctor")
-                        .WithMany("ServiceReviews")
-                        .HasForeignKey("DoctorId")
-                        .IsRequired()
-                        .HasConstraintName("FK_ServiceReview_Doctors");
-
-                    b.HasOne("PRN221.Project.Domain.Entities.Patient", "Patient")
-                        .WithMany("ServiceReviews")
-                        .HasForeignKey("PatientId")
-                        .IsRequired()
-                        .HasConstraintName("FK_ServiceReview_Patients");
-
-                    b.HasOne("PRN221.Project.Domain.Entities.Service", "Service")
-                        .WithMany("ServiceReviews")
-                        .HasForeignKey("ServiceId")
-                        .IsRequired()
-                        .HasConstraintName("FK_ServiceReview_Services");
-
                     b.Navigation("Appointment");
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("Patient");
-
-                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Appointment", b =>
                 {
-                    b.Navigation("AppointmentResult");
-
                     b.Navigation("MedicalBill");
 
-                    b.Navigation("ServiceReviews");
+                    b.Navigation("ServiceReview");
                 });
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Department", b =>
@@ -735,11 +705,7 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Doctor", b =>
                 {
-                    b.Navigation("PersonalInformation");
-
-                    b.Navigation("Schedules");
-
-                    b.Navigation("ServiceReviews");
+                    b.Navigation("Appointments");
                 });
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Patient", b =>
@@ -747,22 +713,16 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("PatientMedicalRecord");
-
-                    b.Navigation("PersonalInformation");
-
-                    b.Navigation("ServiceReviews");
-                });
-
-            modelBuilder.Entity("PRN221.Project.Domain.Entities.Schedule", b =>
-                {
-                    b.Navigation("Appointments");
                 });
 
             modelBuilder.Entity("PRN221.Project.Domain.Entities.Service", b =>
                 {
-                    b.Navigation("Schedules");
+                    b.Navigation("Appointments");
+                });
 
-                    b.Navigation("ServiceReviews");
+            modelBuilder.Entity("PRN221.Project.Domain.Entities.Staff", b =>
+                {
+                    b.Navigation("PatientMedicalRecords");
                 });
 #pragma warning restore 612, 618
         }

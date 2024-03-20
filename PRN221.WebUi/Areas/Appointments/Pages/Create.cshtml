@@ -20,26 +20,21 @@
                 <span asp-validation-for="Appointment.Status" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Appointment.PatientId" class="control-label"></label>
+                <label asp-for="Appointment.PatientId" class="control-label">Patients</label>
                 <select asp-for="Appointment.PatientId" class ="form-control" asp-items="ViewBag.PatientId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="Appointment.DoctorId" class="control-label"></label>
+                <label asp-for="Appointment.DoctorId" class="control-label">Doctors</label>
                 <select asp-for="Appointment.DoctorId" class ="form-control" asp-items="ViewBag.DoctorId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="Appointment.ServiceId" class="control-label"></label>
+                <label asp-for="Appointment.ServiceId" class="control-label">Services</label>
                 <select asp-for="Appointment.ServiceId" class ="form-control" asp-items="ViewBag.ServiceId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="Appointment.Date" class="control-label"></label>
+                <label asp-for="Appointment.Date" class="control-label">DateTime</label>
                 <input asp-for="Appointment.Date" class="form-control" />
                 <span asp-validation-for="Appointment.Date" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.Time" class="control-label"></label>
-                <input asp-for="Appointment.Time" class="form-control" />
-                <span asp-validation-for="Appointment.Time" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

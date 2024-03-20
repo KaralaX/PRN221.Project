@@ -13,6 +13,8 @@ public static class DependencyInjection
 
         services.ConfigureApplicationCookie(options => options.AccessDeniedPath = "/Identity/Account/AccessDenied");
 
+        services.AddSession();
+        
         return services;
     }
 }

@@ -19,21 +19,14 @@
             </button>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="Departments" asp-page="/Index">Departments</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="Services" asp-page="/Index">Services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="Doctors" asp-page="/Index">Doctors</a>
-                    </li>
+                    <partial name="_ManageNavPartial"/>
                 </ul>
                 <partial name="_LoginPartial"/>
             </div>
         </div>
     </nav>
 </header>
+
 <div class="container">
     <main role="main" class="pb-3">
         @RenderBody()
@@ -42,7 +35,7 @@
 
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2024 - Medical Appointment System - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        &copy; 2024 - MAS - <a asp-area="" asp-page="/Privacy">Privacy</a>
     </div>
 </footer>
 

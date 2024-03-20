@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace PRN221.WebUi.Areas.Identity.Pages.Account;
+namespace PRN221.WebUi.Areas.Payments;
 
-public class Index : PageModel
+public class CheckOut : PageModel
 {
     public void OnGet()
     {
