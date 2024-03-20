@@ -1,0 +1,52 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PRN221.Project.Domain.Constant
+@using PRN221.Project.Infrastructure.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+}
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var roles = await UserManager.GetRolesAsync(user);
+
+    if (roles.Contains(Roles.Admin))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Departments" asp-page="/Index" title="Manage">Manage Departments</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Services" asp-page="/Index" title="Manage">Manage Services</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Doctors" asp-page="/Index" title="Manage">Manage Doctors</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Staffs" asp-page="/Index" title="Manage">Manage Staffs</a>
+        </li>
+    }
+    else if (roles.Contains(Roles.Doctor) || roles.Contains(Roles.Staff))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Appointments" asp-page="/Index" title="Manage">Manage Appointments</a>
+        </li>   
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Departments" asp-page="/Index">Departments</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Services" asp-page="/Index">Services</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Doctors" asp-page="/Index">Doctors</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Appointments" asp-page="/Index">My Appointments</a>
+        </li>
+    }
+}

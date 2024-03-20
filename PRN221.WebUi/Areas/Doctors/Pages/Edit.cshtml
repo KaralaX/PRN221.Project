@@ -1,8 +1,9 @@
-﻿@page
+@page
 @model PRN221.WebUi.Areas.Doctors.Pages.EditModel
 
 @{
     ViewData["Title"] = "Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Edit</h1>
@@ -14,6 +15,31 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Doctor.Id" />
+            <div class="form-group">
+                <label asp-for="Doctor.Address" class="control-label"></label>
+                <input asp-for="Doctor.Address" class="form-control" />
+                <span asp-validation-for="Doctor.Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Doctor.FirstName" class="control-label"></label>
+                <input asp-for="Doctor.FirstName" class="form-control" />
+                <span asp-validation-for="Doctor.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Doctor.LastName" class="control-label"></label>
+                <input asp-for="Doctor.LastName" class="form-control" />
+                <span asp-validation-for="Doctor.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Doctor.Dob" class="control-label"></label>
+                <input asp-for="Doctor.Dob" class="form-control" />
+                <span asp-validation-for="Doctor.Dob" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Doctor.Gender" class="control-label"></label>
+                <input asp-for="Doctor.Gender" class="form-control" />
+                <span asp-validation-for="Doctor.Gender" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="Doctor.UserId" class="control-label"></label>
                 <input asp-for="Doctor.UserId" class="form-control" />

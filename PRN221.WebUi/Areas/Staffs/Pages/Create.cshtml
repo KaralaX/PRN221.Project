@@ -1,0 +1,68 @@
+@page
+@model PRN221.WebUi.Areas.Staffs.Pages.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>Staff</h4>
+<hr/>
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="User.Email" class="control-label"></label>
+                <input asp-for="User.Email" class="form-control"/>
+                <span asp-validation-for="User.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="User.Password" class="control-label"></label>
+                <input asp-for="User.Password" class="form-control"/>
+                <span asp-validation-for="User.Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Staff.Gender" class="control-label"></label>
+                <select asp-for="Staff.Gender" class="form-control">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+                <span asp-validation-for="Staff.Gender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Staff.Address" class="control-label"></label>
+                <input asp-for="Staff.Address" class="form-control"/>
+                <span asp-validation-for="Staff.Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Staff.FirstName" class="control-label"></label>
+                <input asp-for="Staff.FirstName" class="form-control"/>
+                <span asp-validation-for="Staff.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Staff.LastName" class="control-label"></label>
+                <input asp-for="Staff.LastName" class="form-control"/>
+                <span asp-validation-for="Staff.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Staff.Dob" class="control-label"></label>
+                <input asp-for="Staff.Dob" class="form-control"/>
+                <span asp-validation-for="Staff.Dob" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

@@ -18,30 +18,39 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
 
     public DbSet<ApplicationUser> Users { get; set; } = null!;
     public DbSet<Appointment> Appointments => Set<Appointment>();
-    public DbSet<AppointmentResult> AppointmentResults { get; set; } = null!;
-    public DbSet<Department> Departments { get; set; } = null!;
-    public DbSet<Doctor> Doctors { get; set; } = null!;
-    public DbSet<MedicalBill> MedicalBills { get; set; } = null!;
-    public DbSet<Patient> Patients { get; set; } = null!;
-    public DbSet<PatientMedicalRecord> PatientMedicalRecords { get; set; } = null!;
-    public DbSet<PersonalInformation> PersonalInformations { get; set; } = null!;
-    public DbSet<Schedule> Schedules { get; set; } = null!;
-    public DbSet<Service> Services { get; set; } = null!;
-    public DbSet<ServiceReview> ServiceReviews { get; set; } = null!;
+    public DbSet<Department> Departments => Set<Department>();
+    public DbSet<Doctor> Doctors => Set<Doctor>();
+    public DbSet<MedicalBill> MedicalBills => Set<MedicalBill>();
+    public DbSet<Patient> Patients => Set<Patient>();
+    public DbSet<Staff> Staffs => Set<Staff>();
+    public DbSet<PatientMedicalRecord> PatientMedicalRecords => Set<PatientMedicalRecord>();
+    public DbSet<Service> Services => Set<Service>();
+    public DbSet<ServiceReview> ServiceReviews => Set<ServiceReview>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        
         modelBuilder.Entity<Appointment>(entity =>
         {
+            entity.HasIndex(e => e.DoctorId, "IX_Appointments_DoctorId");
+
             entity.HasIndex(e => e.PatientId, "IX_Appointments_PatientId");
 
-            entity.HasIndex(e => e.ScheduleId, "IX_Appointments_ScheduleId");
+            entity.HasIndex(e => e.ServiceId, "IX_Appointments_ServiceId");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+
+            entity.Property(e => e.Date).HasColumnType("date");
 
             entity.Property(e => e.Status).HasMaxLength(50);
+
+            entity.HasOne(d => d.Doctor)
+                .WithMany(p => p.Appointments)
+                .HasForeignKey(d => d.DoctorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Appointments_Doctors");
 
             entity.HasOne(d => d.Patient)
                 .WithMany(p => p.Appointments)
@@ -49,219 +58,187 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Appointments_Patients");
 
-            entity.HasOne(d => d.Schedule)
+            entity.HasOne(d => d.Service)
                 .WithMany(p => p.Appointments)
-                .HasForeignKey(d => d.ScheduleId)
+                .HasForeignKey(d => d.ServiceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Appointments_Schedules");
+                .HasConstraintName("FK_Appointments_Services");
         });
-
-        modelBuilder.Entity<AppointmentResult>(entity =>
-        {
-            entity.HasKey(e => e.AppointmentId);
-
-            entity.Property(e => e.AppointmentId).ValueGeneratedNever();
-
-            entity.Property(e => e.TestResult).HasColumnType("text");
-
-            entity.Property(e => e.TreatmentPlan).HasColumnType("text");
-
-            entity.HasOne(d => d.Appointment)
-                .WithOne(p => p.AppointmentResult)
-                .HasForeignKey<AppointmentResult>(d => d.AppointmentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_AppointmentResults_Appointments");
-        });
-
+        
         modelBuilder.Entity<Department>(entity =>
-        {
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            {
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
-            entity.Property(e => e.Description).HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(100);
 
-            entity.Property(e => e.Name).HasMaxLength(100);
-        });
+                entity.Property(e => e.Name).HasMaxLength(100);
+            });
 
-        modelBuilder.Entity<Doctor>(entity =>
-        {
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            modelBuilder.Entity<Doctor>(entity =>
+            {
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
-            entity.Property(e => e.UserId).HasMaxLength(450);
+                entity.Property(e => e.Address).HasMaxLength(100);
 
-            entity.HasMany(d => d.Services)
-                .WithMany(p => p.Doctors)
-                .UsingEntity<Dictionary<string, object>>(
-                    "DoctorService",
-                    l => l.HasOne<Service>().WithMany().HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_DoctorServices_Services"),
-                    r => r.HasOne<Doctor>().WithMany().HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_DoctorServices_Doctors"),
-                    j =>
-                    {
-                        j.HasKey("DoctorId", "ServiceId");
+                entity.Property(e => e.FirstName)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
 
-                        j.ToTable("DoctorServices");
+                entity.Property(e => e.Gender).HasMaxLength(20);
 
-                        j.HasIndex(new[] { "ServiceId" }, "IX_DoctorServices_ServiceId");
-                    });
-        });
+                entity.Property(e => e.LastName)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
 
-        modelBuilder.Entity<MedicalBill>(entity =>
-        {
-            entity.HasKey(e => e.AppointmentId);
+                entity.Property(e => e.UserId).HasMaxLength(450);
 
-            entity.Property(e => e.AppointmentId).ValueGeneratedNever();
+                entity.HasMany(d => d.Services)
+                    .WithMany(p => p.Doctors)
+                    .UsingEntity<Dictionary<string, object>>(
+                        "DoctorService",
+                        l => l.HasOne<Service>().WithMany().HasForeignKey("ServiceId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_DoctorServices_Services"),
+                        r => r.HasOne<Doctor>().WithMany().HasForeignKey("DoctorId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_DoctorServices_Doctors"),
+                        j =>
+                        {
+                            j.HasKey("DoctorId", "ServiceId");
 
-            entity.Property(e => e.Price).HasColumnType("money");
+                            j.ToTable("DoctorServices");
 
-            entity.HasOne(d => d.Appointment)
-                .WithOne(p => p.MedicalBill)
-                .HasForeignKey<MedicalBill>(d => d.AppointmentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_MedicalBills_Appointments");
-        });
+                            j.HasIndex(new[] { "ServiceId" }, "IX_DoctorServices_ServiceId");
 
-        modelBuilder.Entity<Patient>(entity =>
-        {
-            entity.Property(e => e.Id).ValueGeneratedNever();
+                            j.IndexerProperty<Guid>("DoctorId").HasDefaultValueSql("(newid())");
 
-            entity.Property(e => e.UserId).HasMaxLength(450);
-        });
+                            j.IndexerProperty<Guid>("ServiceId").HasDefaultValueSql("(newid())");
+                        });
+            });
 
-        modelBuilder.Entity<PatientMedicalRecord>(entity =>
-        {
-            entity.HasKey(e => e.PatientId);
+            modelBuilder.Entity<MedicalBill>(entity =>
+            {
+                entity.HasKey(e => e.AppointmentId);
 
-            entity.Property(e => e.PatientId).ValueGeneratedNever();
+                entity.Property(e => e.AppointmentId).HasDefaultValueSql("(newid())");
 
-            entity.Property(e => e.Allergies).HasColumnType("text");
+                entity.Property(e => e.Price).HasColumnType("money");
 
-            entity.Property(e => e.Medications).HasColumnType("text");
+                entity.HasOne(d => d.Appointment)
+                    .WithOne(p => p.MedicalBill)
+                    .HasForeignKey<MedicalBill>(d => d.AppointmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MedicalBills_Appointments");
+            });
 
-            entity.HasOne(d => d.Patient)
-                .WithOne(p => p.PatientMedicalRecord)
-                .HasForeignKey<PatientMedicalRecord>(d => d.PatientId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PatientMedicalRecords_Patients");
-        });
+            modelBuilder.Entity<Patient>(entity =>
+            {
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
-        modelBuilder.Entity<PersonalInformation>(entity =>
-        {
-            entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Address).HasMaxLength(100);
 
-            entity.Property(e => e.Address).HasMaxLength(100);
+                entity.Property(e => e.FirstName)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
 
-            entity.Property(e => e.FirstName)
-                .HasMaxLength(50)
-                .IsFixedLength();
+                entity.Property(e => e.Gender).HasMaxLength(20);
 
-            entity.Property(e => e.Gender).HasMaxLength(20);
+                entity.Property(e => e.LastName)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
 
-            entity.Property(e => e.LastName)
-                .HasMaxLength(50)
-                .IsFixedLength();
+                entity.Property(e => e.UserId).HasMaxLength(450);
+            });
 
-            entity.HasOne(d => d.IdNavigation)
-                .WithOne(p => p.PersonalInformation)
-                .HasForeignKey<PersonalInformation>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PersonalInformations_Doctors");
+            modelBuilder.Entity<PatientMedicalRecord>(entity =>
+            {
+                entity.HasKey(e => e.PatientId)
+                    .HasName("PK_PatientMedicalRecords_1");
 
-            entity.HasOne(d => d.Id1)
-                .WithOne(p => p.PersonalInformation)
-                .HasForeignKey<PersonalInformation>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PersonalInformations_Patients");
-        });
+                entity.HasIndex(e => e.UpdatedByStaff, "IX_PatientMedicalRecords_UpdatedByStaff");
 
-        modelBuilder.Entity<Schedule>(entity =>
-        {
-            entity.HasIndex(e => e.DoctorId, "IX_Schedules_DoctorId");
+                entity.Property(e => e.PatientId).HasDefaultValueSql("(newid())");
 
-            entity.HasIndex(e => e.ServiceId, "IX_Schedules_ServiceId");
+                entity.Property(e => e.CreatedDate).HasColumnType("date");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.FileName).HasMaxLength(250);
 
-            entity.Property(e => e.DateTime).HasColumnType("datetime");
+                entity.Property(e => e.Note).HasMaxLength(500);
 
-            entity.HasOne(d => d.Doctor)
-                .WithMany(p => p.Schedules)
-                .HasForeignKey(d => d.DoctorId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Schedules_Doctors");
+                entity.Property(e => e.UpdatedDate).HasColumnType("date");
 
-            entity.HasOne(d => d.Service)
-                .WithMany(p => p.Schedules)
-                .HasForeignKey(d => d.ServiceId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Schedules_Services");
-        });
+                entity.HasOne(d => d.Patient)
+                    .WithOne(p => p.PatientMedicalRecord)
+                    .HasForeignKey<PatientMedicalRecord>(d => d.PatientId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PatientMedicalRecords_Patients");
 
-        modelBuilder.Entity<Service>(entity =>
-        {
-            entity.HasIndex(e => e.DepartmentId, "IX_Services_DepartmentId");
+                entity.HasOne(d => d.UpdatedByStaffNavigation)
+                    .WithMany(p => p.PatientMedicalRecords)
+                    .HasForeignKey(d => d.UpdatedByStaff)
+                    .HasConstraintName("FK_PatientMedicalRecords_Staffs");
+            });
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            modelBuilder.Entity<Service>(entity =>
+            {
+                entity.HasIndex(e => e.DepartmentId, "IX_Services_DepartmentId");
 
-            entity.Property(e => e.Description).HasMaxLength(100);
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
-            entity.Property(e => e.Name).HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(100);
 
-            entity.Property(e => e.Price).HasColumnType("money");
+                entity.Property(e => e.Name).HasMaxLength(100);
 
-            entity.HasOne(d => d.Department)
-                .WithMany(p => p.Services)
-                .HasForeignKey(d => d.DepartmentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Services_Departments");
-        });
+                entity.Property(e => e.Price).HasColumnType("money");
 
-        modelBuilder.Entity<ServiceReview>(entity =>
-        {
-            entity.ToTable("ServiceReview");
+                entity.HasOne(d => d.Department)
+                    .WithMany(p => p.Services)
+                    .HasForeignKey(d => d.DepartmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Services_Departments");
+            });
 
-            entity.HasIndex(e => e.AppointmentId, "IX_ServiceReview_AppointmentId");
+            modelBuilder.Entity<ServiceReview>(entity =>
+            {
+                entity.HasKey(e => e.AppointmentId);
 
-            entity.HasIndex(e => e.DoctorId, "IX_ServiceReview_DoctorId");
+                entity.ToTable("ServiceReview");
 
-            entity.HasIndex(e => e.PatientId, "IX_ServiceReview_PatientId");
+                entity.Property(e => e.AppointmentId).ValueGeneratedNever();
 
-            entity.HasIndex(e => e.ServiceId, "IX_ServiceReview_ServiceId");
+                entity.Property(e => e.Comment).HasMaxLength(250);
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.CreatedDateTime).HasColumnType("datetime");
 
-            entity.Property(e => e.Comment).HasMaxLength(500);
+                entity.Property(e => e.UpdatedDateTime).HasColumnType("datetime");
 
-            entity.HasOne(d => d.Appointment)
-                .WithMany(p => p.ServiceReviews)
-                .HasForeignKey(d => d.AppointmentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ServiceReview_Appointments");
+                entity.HasOne(d => d.Appointment)
+                    .WithOne(p => p.ServiceReview)
+                    .HasForeignKey<ServiceReview>(d => d.AppointmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ServiceReview_Appointments");
+            });
 
-            entity.HasOne(d => d.Doctor)
-                .WithMany(p => p.ServiceReviews)
-                .HasForeignKey(d => d.DoctorId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ServiceReview_Doctors");
+            modelBuilder.Entity<Staff>(entity =>
+            {
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
-            entity.HasOne(d => d.Patient)
-                .WithMany(p => p.ServiceReviews)
-                .HasForeignKey(d => d.PatientId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ServiceReview_Patients");
+                entity.Property(e => e.Address).HasMaxLength(100);
 
-            entity.HasOne(d => d.Service)
-                .WithMany(p => p.ServiceReviews)
-                .HasForeignKey(d => d.ServiceId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ServiceReview_Services");
-        });
+                entity.Property(e => e.FirstName)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Gender).HasMaxLength(20);
+
+                entity.Property(e => e.LastName)
+                    .HasMaxLength(50)
+                    .IsFixedLength();
+
+                entity.Property(e => e.UserId).HasMaxLength(450);
+            });
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-
-        optionsBuilder.UseSqlServer("Server=(local);Database=PRN221.Project;User=sa;Password=12345678;");
+    
+        optionsBuilder.UseSqlServer("Server=(local);Database=PRN221.Project;User=sa;Password=sa;");
     }
 }

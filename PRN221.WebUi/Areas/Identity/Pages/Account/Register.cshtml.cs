@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using PRN221.Project.Application.Users.Command.CreateUser;
+using PRN221.Project.Domain.Constant;
 using PRN221.Project.Infrastructure.Identity;
 
 namespace PRN221.WebUi.Areas.Identity.Pages.Account
@@ -23,13 +25,14 @@ namespace PRN221.WebUi.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly MediatR.ISender _mediator;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender, MediatR.ISender mediator)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -37,6 +40,7 @@ namespace PRN221.WebUi.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _mediator = mediator;
         }
 
         /// <summary>
@@ -111,7 +115,11 @@ namespace PRN221.WebUi.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
+                
+                await _userManager.AddToRoleAsync(user, Roles.Patient);
 
+                await _mediator.Send(new CreateUserCommand(user.Id, Roles.Patient));
+                
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");

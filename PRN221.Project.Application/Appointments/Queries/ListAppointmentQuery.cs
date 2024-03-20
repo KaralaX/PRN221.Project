@@ -21,9 +21,6 @@ public class ListAppointmentQueryHandler : IRequestHandler<ListAppointmentQuery,
     {
         var appointments = _applicationDbContext.Appointments;
 
-        return appointments.Where(x =>
-            x.ScheduleId == request.scheduleId
-            && x.PatientId == request.patiendID
-        ).ToList();
+        return appointments;
     }
 }

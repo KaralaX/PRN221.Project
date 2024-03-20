@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +8,18 @@ namespace PRN221.WebUi.Areas.Departments.Pages
 {
     public class DetailsModel : PageModel
     {
-        private readonly PRN221.Project.Infrastructure.Persistence.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public DetailsModel(PRN221.Project.Infrastructure.Persistence.ApplicationDbContext context)
+        public DetailsModel(ApplicationDbContext context)
         {
             _context = context;
         }
 
-      public Department Department { get; set; } = default!; 
+        public Department Department { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(Guid? id)
         {
-            if (id == null || _context.Departments == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -33,10 +29,11 @@ namespace PRN221.WebUi.Areas.Departments.Pages
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 Department = department;
             }
+
             return Page();
         }
     }
