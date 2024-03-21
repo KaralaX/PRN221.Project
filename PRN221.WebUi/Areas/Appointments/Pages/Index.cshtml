@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using PRN221.Project.Domain.Constant
+@using PRN221.Project.Domain.Enums
 @using PRN221.Project.Infrastructure.Identity
 @inject UserManager<ApplicationUser> _userManager;
 @model PRN221.WebUi.Areas.Appointments.Pages.IndexModel
@@ -49,7 +50,7 @@ else
         <th>
             @Html.DisplayNameFor(model => model.Appointment[0].Status)
         </th>
-        <th>Actions</th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
@@ -79,9 +80,26 @@ else
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Cancel</a>
+                <div class="input-group">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</button>
+                    <ul class="dropdown-menu">
+                        @if (item.Status == AppointmentStatus.Booked.ToString())
+                        {
+                            <li>
+                                <a class="dropdown-item" asp-page="./Edit" asp-route-id="@item.Id">Edit</a>
+                            </li>
+                        }
+                        <li>
+                            <a class="dropdown-item" asp-page="./Details" asp-route-id="@item.Id">Details</a>
+                        </li>
+                        @if (item.Status == AppointmentStatus.Booked.ToString())
+                        {
+                            <li>
+                                <a class="dropdown-item" asp-page="./Delete" asp-route-id="@item.Id">Cancel</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
             </td>
         </tr>
     }

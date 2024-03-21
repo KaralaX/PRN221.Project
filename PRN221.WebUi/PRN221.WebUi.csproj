@@ -109,6 +109,7 @@
     <Folder Include="Areas\Doctors\Pages\" />
     <Folder Include="Areas\Services\Pages\" />
     <Folder Include="Areas\Staffs\Pages\" />
+    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
 </Project>

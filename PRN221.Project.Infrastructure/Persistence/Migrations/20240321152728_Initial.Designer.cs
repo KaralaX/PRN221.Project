@@ -12,7 +12,7 @@ using PRN221.Project.Infrastructure.Persistence;
 namespace PRN221.Project.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240320011928_Initial")]
+    [Migration("20240321152728_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -360,6 +360,11 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
 
                     b.Property<decimal?>("Price")
                         .HasColumnType("money");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime?>("UpdatedDateTime")
                         .HasColumnType("datetime2");

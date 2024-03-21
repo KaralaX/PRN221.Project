@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Domain.Entities;
+using PRN221.Project.Domain.Enums;
 using PRN221.Project.Infrastructure.Persistence;
 
 namespace PRN221.WebUi.Areas.Appointments.Pages;
@@ -24,7 +25,11 @@ public class DeleteModel : PageModel
             return NotFound();
         }
 
-        var appointment = await _context.Appointments.FirstOrDefaultAsync(m => m.Id == id);
+        var appointment = await _context.Appointments
+            .Include(x => x.Patient)
+            .Include(x => x.Doctor)
+            .Include(x => x.Service)
+            .FirstOrDefaultAsync(m => m.Id == id);
         if (appointment == null)
         {
             return NotFound();
@@ -43,13 +48,14 @@ public class DeleteModel : PageModel
 
         var appointment = await _context.Appointments
             .Include(x => x.MedicalBill)
-            .Include(x => x.ServiceReview)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (appointment == null) return RedirectToPage("./Index");
+
+        appointment.Status = AppointmentStatus.Cancelled.ToString();
+        appointment.MedicalBill.Status = PaymentStatus.Cancelled.ToString();
         
-        Appointment = appointment;
-        _context.Appointments.Remove(Appointment);
+        _context.Appointments.Update(appointment);
         await _context.SaveChangesAsync();
 
         return RedirectToPage("./Index");

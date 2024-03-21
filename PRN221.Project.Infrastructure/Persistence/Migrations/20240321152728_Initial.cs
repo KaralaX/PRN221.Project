@@ -329,6 +329,7 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                 {
                     AppointmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
                     Price = table.Column<decimal>(type: "money", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CreatedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
