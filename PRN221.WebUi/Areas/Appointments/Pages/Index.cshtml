@@ -43,16 +43,16 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Date)
+                @item.Date.ToString("MM-dd-yyyy")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Time)
+                @item.Time.ToString(@"hh\:mm")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Doctor/*.UserId*/)
+                @item.Doctor.FirstName @item.Doctor.LastName
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Patient/*.UserId*/)
+                @item.Patient.FirstName @item.Patient.LastName
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Service.Description)

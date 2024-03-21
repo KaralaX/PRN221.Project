@@ -12,9 +12,7 @@
 
         @if (await UserManager.IsInRoleAsync(user, Roles.Patient))
         {
-            <button class="btn-primary">
                 <a id="book" class="nav-link text-dark" asp-area="Appointments" asp-page="/Book">Book Appointment</a>
-            </button>
         }
 
         <li class="nav-item">

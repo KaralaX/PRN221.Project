@@ -118,6 +118,8 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
                 entity.Property(e => e.AppointmentId).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.Price).HasColumnType("money");
+                
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.HasOne(d => d.Appointment)
                     .WithOne(p => p.MedicalBill)
