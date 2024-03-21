@@ -30,7 +30,6 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
         
         modelBuilder.Entity<Appointment>(entity =>
         {

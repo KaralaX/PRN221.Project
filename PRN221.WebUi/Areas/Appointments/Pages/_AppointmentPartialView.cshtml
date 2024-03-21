@@ -1,0 +1,15 @@
+﻿@model List<Book.AppointmentSlot>
+
+@if (Model.Any())
+{
+    @foreach (var timeslot in Model)
+    {
+        <div>
+            @timeslot.StartTime
+        </div>
+    }
+}
+else
+{
+    <span>No available time slots for the selected date and doctor.</span>
+}

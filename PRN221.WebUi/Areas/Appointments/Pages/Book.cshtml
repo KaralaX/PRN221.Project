@@ -1,42 +1,81 @@
 ﻿@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model PRN221.WebUi.Areas.Appointments.Pages.Book
+
 @{
     ViewData["Title"] = "Book Appointment";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Book an Appointment</h1>
-<hr />
+
+<div class="position-relative m-4">
+    <div class="progress" role="progressbar" aria-label="Progress" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="height: 1px;">
+        <div class="progress-bar" style="width: 50%"></div>
+    </div>
+    <button type="button" class="position-absolute top-0 start-0 translate-middle btn btn-sm btn-primary rounded-pill" style="width: 2rem; height:2rem;">1</button>
+    <button type="button" class="position-absolute top-0 start-50 translate-middle btn btn-sm btn-primary rounded-pill" style="width: 2rem; height:2rem;">2</button>
+    <button type="button" class="position-absolute top-0 start-100 translate-middle btn btn-sm btn-secondary rounded-pill" style="width: 2rem; height:2rem;">3</button>
+</div>
 
 <div class="row">
     <form method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="Appointment.PatientId" class="control-label">Patient</label>
-            <select asp-for="Appointment.PatientId" class="form-control" asp-items="ViewBag.Patients" readonly></select>
+
+        <div class="form-group form-floating mb-3">
+            <select asp-for="Appointment.ServiceId" class="form-control form-select" asp-items="ViewBag.Services"></select>
+            <label asp-for="Appointment.ServiceId">Service</label>
         </div>
-        <div class="form-group">
-            <label asp-for="Appointment.DoctorId" class="control-label">Doctor</label>
-            <select asp-for="Appointment.DoctorId" class="form-control" asp-items="ViewBag.Doctors">
-            </select>
+
+        <div class="form-group form-floating mb-3">
+            <select asp-for="Appointment.DoctorId" class="form-control form-select" asp-items="ViewBag.Doctors"></select>
+            <label asp-for="Appointment.DoctorId">Doctor</label>
         </div>
-        <div class="form-group">
-            <label asp-for="Appointment.ServiceId" class="control-label">Service</label>
-            <select asp-for="Appointment.ServiceId" class="form-control" asp-items="ViewBag.Services">
-            </select>
-        </div>
-        <div class="form-group">
-            <label asp-for="Appointment.Date" class="control-label"></label>
-            <input asp-for="Appointment.Date" class="form-control" />
+
+        <div class="form-group form-floating mb-3">
+            <input asp-for="Appointment.Date" type="date" class="form-control" onchange="loadTimeSlotsPartial(this.value)"/>
+            <label asp-for="Appointment.Date"></label>
             <span asp-validation-for="Appointment.Date" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label asp-for="Appointment.Time" class="control-label"></label>
-            <input asp-for="Appointment.Time" class="form-control" />
-            <span asp-validation-for="Appointment.Time" class="text-danger"></span>
+
+        <div class="form-group mb-3">
+            <label asp-for="Appointment.File">Medical Record</label>
+            <input asp-for="Appointment.File" class="form-control"/>
+            <span asp-validation-for="Appointment.File" class="text-danger"></span>
         </div>
+
+        <div class="form-group mb-3">
+            <div id="timeSlotsPartial"></div>
+        </div>
+
         <div class="form-group">
-            <input type="submit" value="Create" class="btn btn-primary" />
+            <input type="submit" value="Create" class="btn btn-primary"/>
         </div>
     </form>
 </div>
+
+@section Scripts
+{
+    <script>
+        function loadTimeSlotsPartial(date) {
+            $.ajax({
+                    url: '/Appointments/Book',
+                    method: 'GET',
+                    data: {
+                        handler: 'AvailableSlotsPartial',
+                        date: date,
+                        doctorId: jQuery('#Appointment_DoctorId').val()
+                    },
+                    success: function(response) {
+                        document.getElementById('timeSlotsPartial').innerHTML = response;
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors
+                        console.error(xhr.responseText);
+                    }
+                });
+        }
+    </script>
+
+}
