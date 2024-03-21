@@ -145,7 +145,8 @@ public class Book : PageModel
             {
                 Price = _context.Services.FirstOrDefault(x => x.Id == Appointment.ServiceId)?.Price,
                 CreatedDateTime = DateTime.Now,
-                UpdatedDateTime = DateTime.Now
+                UpdatedDateTime = DateTime.Now,
+                Status = PaymentStatus.Pending.ToString()
             }
         };
 

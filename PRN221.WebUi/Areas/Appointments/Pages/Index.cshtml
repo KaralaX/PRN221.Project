@@ -1,47 +1,62 @@
 @page
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PRN221.Project.Domain.Constant
+@using PRN221.Project.Infrastructure.Identity
+@inject UserManager<ApplicationUser> _userManager;
 @model PRN221.WebUi.Areas.Appointments.Pages.IndexModel
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Pages/Shared/_Layout.cshtml";
+    var user = await _userManager.GetUserAsync(User);
+
+    var isPatient = await _userManager.IsInRoleAsync(user, Roles.Patient);
+}
+@if (isPatient)
+{
+    <h1>Appointments</h1>
+}
+else
+{
+    <h1>Manage Appointments</h1>
+    <p>
+        <a asp-page="Create">Create New</a>
+    </p>
 }
 
-<h1>Manage Appointments</h1>
-
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
+<table class="table table-striped table-borderless">
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Appointment[0].Status)
+            Scheduled Date
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Appointment[0].Date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Appointment[0].Time)
+            Scheduled Time
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Appointment[0].Doctor)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Appointment[0].Patient)
-        </th>
+        @if (!isPatient)
+        {
+            <th>
+                @Html.DisplayNameFor(model => model.Appointment[0].Patient)
+            </th>
+        }
         <th>
             @Html.DisplayNameFor(model => model.Appointment[0].Service)
         </th>
-        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.Appointment[0].Status)
+        </th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
     @foreach (var item in Model.Appointment)
     {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
+
             <td>
                 @item.Date.ToString("MM-dd-yyyy")
             </td>
@@ -51,16 +66,22 @@
             <td>
                 @item.Doctor.FirstName @item.Doctor.LastName
             </td>
-            <td>
-                @item.Patient.FirstName @item.Patient.LastName
-            </td>
+            @if (!isPatient)
+            {
+                <td>
+                    @item.Patient.FirstName @item.Patient.LastName
+                </td>
+            }
             <td>
                 @Html.DisplayFor(modelItem => item.Service.Description)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
                 <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-page="./Delete" asp-route-id="@item.Id">Cancel</a>
             </td>
         </tr>
     }

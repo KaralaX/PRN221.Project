@@ -10,43 +10,49 @@
 
 <div>
     <h4>Appointment</h4>
-    <hr />
+    <hr/>
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.Status)
+            Booking Status
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Appointment.Status)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.Date)
+            Scheduled Date
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.Date)
+            @Model.Appointment.Date.ToString("MM/dd/yyyy")
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appointment.Time)
+            Scheduled Time
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.Time)
+            @Model.Appointment.Time.ToString(@"hh\:mm")
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Appointment.Doctor)
         </dt>
         <dd class="col-sm-10">
-            @Model.Appointment.Doctor.LastName @Model.Appointment.Doctor.LastName
+            @Model.Appointment.Doctor.FirstName @Model.Appointment.Doctor.LastName
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Appointment.Patient)
         </dt>
         <dd class="col-sm-10">
-            @Model.Appointment.Patient.LastName @Model.Appointment.Patient.LastName
+            @Model.Appointment.Patient.FirstName @Model.Appointment.Patient.LastName
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Appointment.Service)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appointment.Service.Description)
+            @Html.DisplayFor(model => model.Appointment.Service.Name)
+        </dd>
+        <dt class="col-sm-2">
+            Payment Status
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Appointment.MedicalBill?.Status
         </dd>
     </dl>
 </div>

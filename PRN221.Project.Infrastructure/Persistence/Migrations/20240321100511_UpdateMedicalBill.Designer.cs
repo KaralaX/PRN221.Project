@@ -12,7 +12,7 @@ using PRN221.Project.Infrastructure.Persistence;
 namespace PRN221.Project.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240321051625_UpdateMedicalBill")]
+    [Migration("20240321100511_UpdateMedicalBill")]
     partial class UpdateMedicalBill
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
