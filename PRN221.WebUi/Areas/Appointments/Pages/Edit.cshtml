@@ -6,56 +6,89 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
-
-<h4>Appointment</h4>
-<hr />
+<h4>Update Appointment</h4>
+<hr/>
 <div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Appointment.Id" />
-            <div class="form-group">
-                <label asp-for="Appointment.Status" class="control-label"></label>
-                <input asp-for="Appointment.Status" class="form-control" />
-                <span asp-validation-for="Appointment.Status" class="text-danger"></span>
+    <form method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group form-floating mb-3">
+            <select class="form-control form-select" asp-items="ViewBag.Services" disabled>
+            </select>
+            <label>Service</label>
+        </div>
+
+        <div class="form-group form-floating mb-3">
+            <select class="form-control form-select" asp-items="ViewBag.Doctors" disabled>
+            </select>
+            <label>Doctor</label>
+        </div>
+
+        <div class="form-group form-floating mb-3">
+            <input asp-for="Appointment.Date" type="date" class="form-control" onchange="loadTimeSlotsPartial(this.value)" onload="loadTimeSlotsPartial(this.value)"/>
+            <label asp-for="Appointment.Date"></label>
+            <span asp-validation-for="Appointment.Date" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <input asp-for="Appointment.Time" type="hidden"/>
+            <div id="timeSlotsPartial">
             </div>
-            <div class="form-group">
-                <label asp-for="Appointment.PatientId" class="control-label"></label>
-                <select asp-for="Appointment.PatientId" class="form-control" asp-items="ViewBag.PatientId"></select>
-                <span asp-validation-for="Appointment.PatientId" class="text-danger"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="Appointment.File">Medical Record</label>
+            <div class="input-group">
+                <input asp-for="Appointment.File" type="file" class="form-control" value="@Model.FilePath"/>
+                @if (!string.IsNullOrEmpty(Model.FilePath))
+                {
+                    <a class="btn btn-outline-secondary" href="@(Url.Content("~/uploads/") + Model.FilePath)" download>Download</a>
+                }
             </div>
-            <div class="form-group">
-                <label asp-for="Appointment.DoctorId" class="control-label"></label>
-                <select asp-for="Appointment.DoctorId" class="form-control" asp-items="ViewBag.DoctorId"></select>
-                <span asp-validation-for="Appointment.DoctorId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.ServiceId" class="control-label"></label>
-                <select asp-for="Appointment.ServiceId" class="form-control" asp-items="ViewBag.ServiceId"></select>
-                <span asp-validation-for="Appointment.ServiceId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.Date" class="control-label"></label>
-                <input asp-for="Appointment.Date" class="form-control" />
-                <span asp-validation-for="Appointment.Date" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.Time" class="control-label"></label>
-                <input asp-for="Appointment.Time" class="form-control" />
-                <span asp-validation-for="Appointment.Time" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+            <span asp-validation-for="Appointment.File" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Confirm" class="btn btn-primary"/>
+             <a class="btn btn-primary" asp-page="./Index">Back to List</a>
+        </div>
+    </form>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@section Scripts
+{
+    <script>
+        $(document).ready(function() {
+            loadTimeSlotsPartial(@Model.Appointment.Date.ToString("MM/dd/yyyy"));
+         });
+    
+        function loadTimeSlotsPartial(date) {
+            const doctorId = '@Model.Appointment.DoctorId';
+            
+            $.ajax({
+                url: '/Appointments/Edit',
+                method: 'GET',
+                data: {
+                    handler: 'AvailableSlotsPartial',
+                    date: date,
+                    doctorId: doctorId
+                },
+                success: function(response) {
+                    document.getElementById('timeSlotsPartial').innerHTML = response;
+                    console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+        function timeSlotSelected(button) {
+            console.log("click");
+            const selectedTime = $(button).data('time');
+            console.log(selectedTime);
+            $('#Appointment_Time').val(selectedTime);
+            $('.time-slot-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+            $(button).removeClass('btn-outline-primary').addClass('btn-primary');
+        }
+    </script>
 }

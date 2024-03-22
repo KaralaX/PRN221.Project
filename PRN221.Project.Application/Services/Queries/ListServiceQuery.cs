@@ -2,7 +2,7 @@
 using PRN221.Project.Application.Common.Interfaces;
 using PRN221.Project.Domain.Entities;
 
-namespace PRN221.Project.Application.Doctors.Queries.ListDoctor;
+namespace PRN221.Project.Application.Services.Queries;
 
 public sealed record ListServiceQuery : IRequest<IQueryable<Service>>;
 

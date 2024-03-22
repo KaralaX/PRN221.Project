@@ -359,6 +359,11 @@ namespace PRN221.Project.Infrastructure.Persistence.Migrations
                     b.Property<decimal?>("Price")
                         .HasColumnType("money");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<DateTime?>("UpdatedDateTime")
                         .HasColumnType("datetime2");
 

@@ -1,42 +1,104 @@
 ﻿@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model PRN221.WebUi.Areas.Appointments.Pages.Book
+
 @{
     ViewData["Title"] = "Book Appointment";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Book an Appointment</h1>
-<hr />
+<hr/>
 
 <div class="row">
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="Appointment.PatientId" class="control-label">Patient</label>
-            <select asp-for="Appointment.PatientId" class="form-control" asp-items="ViewBag.Patients" readonly></select>
-        </div>
-        <div class="form-group">
-            <label asp-for="Appointment.DoctorId" class="control-label">Doctor</label>
-            <select asp-for="Appointment.DoctorId" class="form-control" asp-items="ViewBag.Doctors">
+
+        <div class="form-group form-floating mb-3">
+            <select asp-for="Appointment.ServiceId" class="form-control form-select" asp-items="ViewBag.Services" onchange="checkFormValidity()">
+                <option>Choose a service</option>
             </select>
+            <label asp-for="Appointment.ServiceId">Service</label>
         </div>
-        <div class="form-group">
-            <label asp-for="Appointment.ServiceId" class="control-label">Service</label>
-            <select asp-for="Appointment.ServiceId" class="form-control" asp-items="ViewBag.Services">
+
+        <div class="form-group form-floating mb-3">
+            <select asp-for="Appointment.DoctorId" class="form-control form-select" asp-items="ViewBag.Doctors" onchange="checkFormValidity()">
+                <option>Choose a doctor</option>
             </select>
+            <label asp-for="Appointment.DoctorId">Doctor</label>
         </div>
-        <div class="form-group">
-            <label asp-for="Appointment.Date" class="control-label"></label>
-            <input asp-for="Appointment.Date" class="form-control" />
+
+        <div class="form-group form-floating mb-3">
+            <input asp-for="Appointment.Date" type="date" class="form-control" onchange="loadTimeSlotsPartial(this.value)" disabled/>
+            <label asp-for="Appointment.Date"></label>
             <span asp-validation-for="Appointment.Date" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label asp-for="Appointment.Time" class="control-label"></label>
-            <input asp-for="Appointment.Time" class="form-control" />
-            <span asp-validation-for="Appointment.Time" class="text-danger"></span>
+
+        <div class="form-group mb-3">
+            <input asp-for="Appointment.Time" type="hidden"/>
+            <div id="timeSlotsPartial">
+
+            </div>
         </div>
+        <div class="form-group mb-3">
+            <label asp-for="Appointment.File">Medical Record</label>
+            <div class="input-group">
+                <input asp-for="Appointment.File" type="file" class="form-control" value="@Model.FilePath"/>
+                @if (!string.IsNullOrEmpty(Model.FilePath))
+                {
+                    <a class="btn btn-outline-secondary" href="@(Url.Content("~/uploads/") + Model.FilePath)" download>Download</a>
+                }
+            </div>
+            <span asp-validation-for="Appointment.File" class="text-danger"></span>
+        </div>
+
         <div class="form-group">
-            <input type="submit" value="Create" class="btn btn-primary" />
+            <input type="submit" value="Confirm" class="btn btn-primary"/>
+            <a class="btn btn-primary" asp-page="./Index">Back to List</a>
         </div>
     </form>
 </div>
+
+@section Scripts
+{
+    <script>
+        function checkFormValidity() {
+            const serviceSelect = document.getElementById('Appointment_ServiceId');
+            const doctorSelect = document.getElementById('Appointment_DoctorId');
+            const dateInput = document.getElementById('Appointment_Date');
+    
+            if (serviceSelect.value !== '' && doctorSelect.value !== '') {
+                dateInput.removeAttribute('disabled');
+            } else {
+                dateInput.setAttribute('disabled', 'disabled');
+            }
+        }
+        function loadTimeSlotsPartial(date) {
+            $.ajax({
+                url: '/Appointments/Book',
+                method: 'GET',
+                data: {
+                    handler: 'AvailableSlotsPartial',
+                    date: date,
+                    doctorId: jQuery('#Appointment_DoctorId').val()
+                },
+                success: function(response) {
+                    document.getElementById('timeSlotsPartial').innerHTML = response;
+                    console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+        function timeSlotSelected(button) {
+            console.log("click");
+            const selectedTime = $(button).data('time');
+            console.log(selectedTime);
+            $('#Appointment_Time').val(selectedTime);
+            $('.time-slot-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+            $(button).removeClass('btn-outline-primary').addClass('btn-primary');
+        };
+    </script>
+}

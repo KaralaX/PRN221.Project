@@ -1,63 +1,63 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Domain.Entities;
+using PRN221.Project.Domain.Enums;
 using PRN221.Project.Infrastructure.Persistence;
 
-namespace PRN221.WebUi.Areas.Appointments.Pages
+namespace PRN221.WebUi.Areas.Appointments.Pages;
+
+public class DeleteModel : PageModel
 {
-    public class DeleteModel : PageModel
+    private readonly ApplicationDbContext _context;
+
+    public DeleteModel(ApplicationDbContext context)
     {
-        private readonly PRN221.Project.Infrastructure.Persistence.ApplicationDbContext _context;
+        _context = context;
+    }
 
-        public DeleteModel(PRN221.Project.Infrastructure.Persistence.ApplicationDbContext context)
+    [BindProperty] public Appointment Appointment { get; set; } = default!;
+
+    public async Task<IActionResult> OnGetAsync(Guid? id)
+    {
+        if (id == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        [BindProperty]
-      public Appointment Appointment { get; set; } = default!;
-
-        public async Task<IActionResult> OnGetAsync(Guid? id)
+        var appointment = await _context.Appointments
+            .Include(x => x.Patient)
+            .Include(x => x.Doctor)
+            .Include(x => x.Service)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (appointment == null)
         {
-            if (id == null || _context.Appointments == null)
-            {
-                return NotFound();
-            }
-
-            var appointment = await _context.Appointments.FirstOrDefaultAsync(m => m.Id == id);
-
-            if (appointment == null)
-            {
-                return NotFound();
-            }
-            else 
-            {
-                Appointment = appointment;
-            }
-            return Page();
+            return NotFound();
         }
 
-        public async Task<IActionResult> OnPostAsync(Guid? id)
+        Appointment = appointment;
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync(Guid? id)
+    {
+        if (id == null)
         {
-            if (id == null || _context.Appointments == null)
-            {
-                return NotFound();
-            }
-            var appointment = await _context.Appointments.FindAsync(id);
-
-            if (appointment != null)
-            {
-                Appointment = appointment;
-                _context.Appointments.Remove(Appointment);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToPage("./Index");
+            return NotFound();
         }
+
+        var appointment = await _context.Appointments
+            .Include(x => x.MedicalBill)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (appointment == null) return RedirectToPage("./Index");
+
+        appointment.Status = AppointmentStatus.Cancelled.ToString();
+        appointment.MedicalBill.Status = PaymentStatus.Cancelled.ToString();
+        
+        _context.Appointments.Update(appointment);
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage("./Index");
     }
 }

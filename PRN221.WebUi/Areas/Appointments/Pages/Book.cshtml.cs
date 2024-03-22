@@ -1,61 +1,213 @@
-﻿using MediatR;
+﻿using System.ComponentModel.DataAnnotations;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Application.Common.Interfaces;
 using PRN221.Project.Application.Doctors.Queries.ListDoctor;
+using PRN221.Project.Application.Services.Queries;
+using PRN221.Project.Domain.Entities;
+using PRN221.Project.Domain.Enums;
+using PRN221.Project.Infrastructure.Identity;
 
 namespace PRN221.WebUi.Areas.Appointments.Pages;
 
 public class Book : PageModel
 {
-    private readonly ISender _mediator;
+    private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IApplicationDbContext _context;
-    public Book(ISender mediator, IApplicationDbContext context)
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+
+    public Book(IWebHostEnvironment webHostEnvironment, IApplicationDbContext context,
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager)
     {
-        _mediator = mediator;
         _context = context;
+        _userManager = userManager;
+        _signInManager = signInManager;
+        _webHostEnvironment = webHostEnvironment;
     }
 
-    [BindProperty]
-    public InputModel Appointment { get; set; }
+    [BindProperty] public InputModel Appointment { get; set; }
 
     public class InputModel
     {
-        public Guid PatientId { get; set; }
-        public Guid DoctorId { get; set; }
-        public Guid ServiceId { get; set; }
-        public DateTime Date { get; set; }
-        public TimeSpan Time { get; set; }
+        [Required] public Guid DoctorId { get; set; }
+        [Required] public Guid ServiceId { get; set; }
+        [Required] public DateTime Date { get; set; }
+        public IFormFile? File { get; set; }
+        [Required] public TimeSpan Time { get; set; }
     }
-    
+
+    public string FilePath { get; set; }
+
     public async void OnGetAsync()
     {
-        var doctors = await _mediator.Send(new ListDoctorQuery());
+        if (!_signInManager.IsSignedIn(User))
+        {
+            RedirectToPage("/Account/Login");
+        }
 
-        var services = await _mediator.Send(new ListServiceQuery());
-
-        ViewData["Doctors"] = doctors.ToList().Select(x => new SelectListItem
+        ViewData["Doctors"] = _context.Doctors.ToList().Select(x => new SelectListItem
         {
             Text = $"{x.FirstName} {x.LastName}",
             Value = x.Id.ToString()
-        });
+        }).ToList();
 
-        ViewData["Services"] = services.ToList().Select(x => new SelectListItem
+        ViewData["Services"] = _context.Services.Select(x => new SelectListItem
         {
             Text = x.Name,
             Value = x.Id.ToString()
-        });
+        }).ToList();
         
-        
-        
-        var patient = _context.Patients.Include(x => x.PatientMedicalRecord).FirstOrDefault();
+        var userId = _userManager.GetUserId(User);
+
+        var patient = _context.Patients.Include(x => x.PatientMedicalRecord).FirstOrDefault(x => x.UserId == userId);
+
+        if (patient is not null)
+        {
+            FilePath = patient.PatientMedicalRecord?.FileName??string.Empty;
+        }
     }
 
-    public void OnPostAsync()
+    public class AppointmentSlot
     {
+        public TimeSpan StartTime { get; set; }
+        public string Duration { get; set; }
+        public bool IsBooked { get; set; }
+    }
+
+    public PartialViewResult OnGetAvailableSlotsPartial(DateTime date, Guid doctorId)
+    {
+        var bookedAppointments = _context.Appointments
+            .Where(x =>
+                x.DoctorId == doctorId
+                && x.Date.Date == date.Date);
+
+        var availableTimeSlots = new List<AppointmentSlot>();
+
+        var startTime = new TimeSpan(9, 0, 0);
+        var endTime = new TimeSpan(17, 0, 0);
+
+        var currentTime = startTime;
+
+        if (date >= DateTime.Now.Date)
+        {
+            while (currentTime.Add(TimeSpan.FromMinutes(15)) <= endTime)
+            {
+                var next = currentTime.Add(TimeSpan.FromMinutes(15));
+
+                var slot = new AppointmentSlot
+                {
+                    StartTime = currentTime,
+                    Duration = $@"{currentTime:hh\:mm} - {next:hh\:mm}",
+                    IsBooked = false
+                };
+
+                if (date == DateTime.Now.Date && currentTime < DateTime.Now.TimeOfDay)
+                {
+                    slot.IsBooked = true;
+                }
+
+                if (bookedAppointments.Any(a => a.Date.Date == date.Date && a.Time == currentTime))
+                    slot.IsBooked = true;
+
+                availableTimeSlots.Add(slot);
+
+                currentTime = next;
+            }
+        }
+
+        return new PartialViewResult
+        {
+            ViewName = "_AppointmentPartialView",
+            ViewData = new ViewDataDictionary<List<AppointmentSlot>>(ViewData, availableTimeSlots)
+        };
+    }
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
+        var userId = _userManager.GetUserId(User);
+
+        var patient = _context.Patients.Include(x => x.PatientMedicalRecord).FirstOrDefault(x => x.UserId == userId);
+
+        if (patient is null)
+        {
+            return Page();
+        }
+
+        //Save appointments
+        var newAppointment = new Appointment
+        {
+            PatientId = patient.Id,
+            DoctorId = Appointment.DoctorId,
+            ServiceId = Appointment.ServiceId,
+            Date = Appointment.Date,
+            Time = Appointment.Time,
+            Status = AppointmentStatus.Booked.ToString(),
+            MedicalBill = new MedicalBill
+            {
+                Price = _context.Services.FirstOrDefault(x => x.Id == Appointment.ServiceId)?.Price,
+                CreatedDateTime = DateTime.Now,
+                UpdatedDateTime = DateTime.Now,
+                Status = PaymentStatus.Pending.ToString()
+            }
+        };
+
+        _context.Appointments.Add(newAppointment);
+
+        //Save medical records
+        var filePath = string.Empty;
+
+        var fileName = string.Empty;
         
+        if (Appointment.File is { Length: > 0 })
+        {
+            var uploadsDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+
+            if (!Directory.Exists(uploadsDirectory))
+            {
+                Directory.CreateDirectory(uploadsDirectory);
+            }
+
+            fileName = Guid.NewGuid() + Path.GetExtension(Appointment.File.FileName);
+
+            filePath = Path.Combine(uploadsDirectory, fileName);
+
+            using var stream = new FileStream(filePath, FileMode.Create);
+
+            await Appointment.File.CopyToAsync(stream);
+
+            await stream.FlushAsync();
+        }
+        var medicalRecord = patient.PatientMedicalRecord;
+
+        if (medicalRecord is null)
+        {
+            patient.PatientMedicalRecord = new PatientMedicalRecord
+            {
+                CreatedDate = DateTime.Now,
+                FileName = fileName
+            };
+        }
+        else
+        {
+            medicalRecord.FileName = fileName;
+        }
+        
+        _context.Patients.Update(patient);
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage("./Index");
     }
 }
