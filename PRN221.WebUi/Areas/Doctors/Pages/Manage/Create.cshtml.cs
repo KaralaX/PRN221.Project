@@ -28,7 +28,17 @@ public class CreateModel : PageModel
         return Page();
     }
 
-    [BindProperty] public Doctor Doctor { get; set; } = default!;
+    [BindProperty] public DoctorModel Doctor { get; set; } = default!;
+
+    public class DoctorModel
+    {
+        public string? Address { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public DateTime? Dob { get; set; }
+        public string? Gender { get; set; }
+        public ICollection<Guid> Services { get; set; } = new HashSet<Guid>();
+    }
     [BindProperty] public UserModel User { get; set; } = default!;
 
     public class UserModel
@@ -61,9 +71,20 @@ public class CreateModel : PageModel
 
         await _userManager.AddToRoleAsync(user, Roles.Doctor);
 
-        Doctor.UserId = user.Id;
+        var services = _context.Services.Where(x => Doctor.Services.Contains(x.Id));
         
-        _context.Doctors.Add(Doctor);
+        var newDoctor = new Doctor
+        {
+            Address = Doctor.Address,
+            FirstName = Doctor.FirstName,
+            LastName = Doctor.LastName,
+            Dob = Doctor.Dob,
+            Gender = Doctor.Gender,
+            UserId = user.Id,
+            Services = services.ToList()
+        };
+        
+        _context.Doctors.Add(newDoctor);
         
         await _context.SaveChangesAsync();
 

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Domain.Entities;
 
-namespace PRN221.WebUi.Areas.Doctors.Pages;
+namespace PRN221.WebUi.Areas.Doctors.Pages.Manage;
 
 public class IndexModel : PageModel
 {
@@ -13,13 +13,11 @@ public class IndexModel : PageModel
         _context = context;
     }
 
-    public IList<Doctor> Doctor { get;set; } = default!;
+    public IList<Doctor> Doctor { get; set; } = default!;
 
     public async Task OnGetAsync()
     {
-        if (_context.Doctors != null)
-        {
-            Doctor = await _context.Doctors.ToListAsync();
-        }
+        Doctor = await _context.Doctors
+            .ToListAsync();
     }
 }

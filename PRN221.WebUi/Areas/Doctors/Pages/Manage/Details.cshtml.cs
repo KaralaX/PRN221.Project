@@ -25,14 +25,13 @@ public class DetailsModel : PageModel
         }
 
         var doctor = await _context.Doctors.FirstOrDefaultAsync(m => m.Id == id);
+        
         if (doctor == null)
         {
             return NotFound();
         }
-        else
-        {
-            Doctor = doctor;
-        }
+
+        Doctor = doctor;
 
         return Page();
     }
