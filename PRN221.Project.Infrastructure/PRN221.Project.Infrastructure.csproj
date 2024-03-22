@@ -27,8 +27,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Vnpay\" />
       <Folder Include="Persistence\Migrations\" />
+      <Folder Include="Vnpay\Services\" />
     </ItemGroup>
 
 </Project>
