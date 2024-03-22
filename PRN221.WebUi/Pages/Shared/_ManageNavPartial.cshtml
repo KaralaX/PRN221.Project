@@ -16,23 +16,23 @@
     if (roles.Contains(Roles.Admin))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Departments" asp-page="/Index" title="Manage">Manage Departments</a>
+            <a class="nav-link text-dark" asp-area="Departments" asp-page="/Manage/Index" title="Manage">Manage Departments</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Services" asp-page="/Index" title="Manage">Manage Services</a>
+            <a class="nav-link text-dark" asp-area="Services" asp-page="/Manage/Index" title="Manage">Manage Services</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Doctors" asp-page="/Index" title="Manage">Manage Doctors</a>
+            <a class="nav-link text-dark" asp-area="Doctors" asp-page="/Manage/Index" title="Manage">Manage Doctors</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Staffs" asp-page="/Index" title="Manage">Manage Staffs</a>
+            <a class="nav-link text-dark" asp-area="Staffs" asp-page="/Manage/Index" title="Manage">Manage Staffs</a>
         </li>
     }
     else if (roles.Contains(Roles.Doctor) || roles.Contains(Roles.Staff))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Appointments" asp-page="/Index" title="Manage">Manage Appointments</a>
-        </li>   
+            <a class="nav-link text-dark" asp-area="Appointments" asp-page="Manage/Index" title="Manage">Manage Appointments</a>
+        </li>
     }
     else
     {

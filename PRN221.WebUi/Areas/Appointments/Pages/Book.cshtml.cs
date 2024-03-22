@@ -70,7 +70,7 @@ public class Book : PageModel
 
         if (patient is not null)
         {
-            FilePath = patient.PatientMedicalRecord.FileName;
+            FilePath = patient.PatientMedicalRecord?.FileName??string.Empty;
         }
     }
 
@@ -167,6 +167,8 @@ public class Book : PageModel
 
         //Save medical records
         var filePath = string.Empty;
+
+        var fileName = string.Empty;
         
         if (Appointment.File is { Length: > 0 })
         {
@@ -177,7 +179,7 @@ public class Book : PageModel
                 Directory.CreateDirectory(uploadsDirectory);
             }
 
-            var fileName = Guid.NewGuid() + Path.GetExtension(Appointment.File.FileName);
+            fileName = Guid.NewGuid() + Path.GetExtension(Appointment.File.FileName);
 
             filePath = Path.Combine(uploadsDirectory, fileName);
 
@@ -194,12 +196,12 @@ public class Book : PageModel
             patient.PatientMedicalRecord = new PatientMedicalRecord
             {
                 CreatedDate = DateTime.Now,
-                FileName = FilePath
+                FileName = fileName
             };
         }
         else
         {
-            medicalRecord.FileName = Appointment.File?.FileName;
+            medicalRecord.FileName = fileName;
         }
         
         _context.Patients.Update(patient);

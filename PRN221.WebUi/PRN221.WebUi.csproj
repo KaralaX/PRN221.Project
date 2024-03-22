@@ -105,10 +105,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Departments\Pages\" />
-    <Folder Include="Areas\Doctors\Pages\" />
-    <Folder Include="Areas\Services\Pages\" />
-    <Folder Include="Areas\Staffs\Pages\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 

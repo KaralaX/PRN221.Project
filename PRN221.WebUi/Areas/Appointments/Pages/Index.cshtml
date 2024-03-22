@@ -4,15 +4,15 @@
 @using PRN221.Project.Domain.Constant
 @using PRN221.Project.Domain.Enums
 @using PRN221.Project.Infrastructure.Identity
-@inject UserManager<ApplicationUser> _userManager;
+@inject UserManager<ApplicationUser> UserManager;
 @model PRN221.WebUi.Areas.Appointments.Pages.IndexModel
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Pages/Shared/_Layout.cshtml";
-    var user = await _userManager.GetUserAsync(User);
+    var user = await UserManager.GetUserAsync(User);
 
-    var isPatient = await _userManager.IsInRoleAsync(user, Roles.Patient);
+    var isPatient = await UserManager.IsInRoleAsync(user, Roles.Patient);
 }
 @if (isPatient)
 {

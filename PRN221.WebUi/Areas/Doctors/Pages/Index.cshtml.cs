@@ -1,25 +1,11 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using PRN221.Project.Domain.Entities;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace PRN221.WebUi.Areas.Doctors.Pages;
 
-public class IndexModel : PageModel
+public class Index : PageModel
 {
-    private readonly Project.Infrastructure.Persistence.ApplicationDbContext _context;
-
-    public IndexModel(Project.Infrastructure.Persistence.ApplicationDbContext context)
+    public void OnGet()
     {
-        _context = context;
-    }
-
-    public IList<Doctor> Doctor { get;set; } = default!;
-
-    public async Task OnGetAsync()
-    {
-        if (_context.Doctors != null)
-        {
-            Doctor = await _context.Doctors.ToListAsync();
-        }
+        
     }
 }
