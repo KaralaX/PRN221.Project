@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PRN221.Project.Domain.Entities
+﻿namespace PRN221.Project.Infrastructure.VnPay.Models
 {
     public class PaymentResponseModel
     {

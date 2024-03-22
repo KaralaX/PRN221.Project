@@ -2,6 +2,7 @@ using PRN221.Project.Application;
 using PRN221.Project.Infrastructure;
 using PRN221.Project.Infrastructure.Persistence;
 using PRN221.Project.Infrastructure.Services;
+using PRN221.Project.Infrastructure.VnPay.Services;
 using PRN221.WebUi;
 
 var builder = WebApplication.CreateBuilder(args);
