@@ -1,0 +1,64 @@
+﻿@page
+@model PRN221.WebUi.Areas.Services.Pages.DetailsModel
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">Service Details</h1>
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4>Service</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3 col-md-2">
+                    @Html.DisplayNameFor(model => model.Service.Name)
+                </dt>
+                <dd class="col-sm-9 col-md-10 mb-3">
+                    @Html.DisplayFor(model => model.Service.Name)
+                </dd>
+
+                <dt class="col-sm-3 col-md-2">
+                    @Html.DisplayNameFor(model => model.Service.Description)
+                </dt>
+                <dd class="col-sm-9 col-md-10 mb-3">
+                    @Html.DisplayFor(model => model.Service.Description)
+                </dd>
+
+                <dt class="col-sm-3 col-md-2">
+                    @Html.DisplayNameFor(model => model.Service.Status)
+                </dt>
+                <dd class="col-sm-9 col-md-10 mb-3">
+                    @Html.DisplayFor(model => model.Service.Status)
+                </dd>
+
+                <dt class="col-sm-3 col-md-2">
+                    @Html.DisplayNameFor(model => model.Service.Price)
+                </dt>
+                <dd class="col-sm-9 col-md-10 mb-3">
+                    @Html.DisplayFor(model => model.Service.Price)
+                </dd>
+
+                <dt class="col-sm-3 col-md-2">
+                    @Html.DisplayNameFor(model => model.Service.Duration)
+                </dt>
+                <dd class="col-sm-9 col-md-10 mb-3">
+                    @Html.DisplayFor(model => model.Service.Duration)
+                </dd>
+
+                <dt class="col-sm-3 col-md-2">
+                    @Html.DisplayNameFor(model => model.Service.Department)
+                </dt>
+                <dd class="col-sm-9 col-md-10 mb-3">
+                    @Html.DisplayFor(model => model.Service.Department.Description)
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <a asp-area="Departments" asp-page="./Index" class="btn btn-primary">Back to List</a>
+        </div>
+    </div>
+</div>

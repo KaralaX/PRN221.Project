@@ -1,15 +1,22 @@
 using PRN221.Project.Application;
 using PRN221.Project.Infrastructure;
 using PRN221.Project.Infrastructure.Persistence;
+using PRN221.WebUi.Hubs;
 using PRN221.WebUi;
+using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSignalR();
 {
     builder.Services
         .AddApplicationServices()
         .AddInfrastructureServices(builder.Configuration)
         .AddWebUiServices();
 }
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 {
@@ -22,7 +29,7 @@ var app = builder.Build();
     {
         await app.InitializeDatabaseAsync();
     }
-
+    app.MapHub<SignalRServer>("/signalRServer");
     app.UseHttpsRedirection();
     app.UseStaticFiles();
 

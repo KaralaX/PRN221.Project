@@ -1,33 +1,38 @@
 ﻿@page
-@model PRN221.WebUi.Areas.Doctors.Pages.Index
+@model PRN221.WebUi.Areas.Departments.Pages.IndexModel
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
-
 <div class="container-xxl py-5">
     <div class="container">
         <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-            <p class="d-inline-block border rounded-pill py-1 px-4">Doctors</p>
-            <h1>Our Experience Doctors</h1>
+            <p class="d-inline-block border rounded-pill py-1 px-4">Department</p>
+            <h1>Health Care Solutions</h1>
         </div>
-
         <div class="row g-4">
-            @foreach (var item in Model.Doctor)
+            @foreach (var item in Model.Department)
             {
-                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <a asp-page="./Details" asp-route-id="@item.Id">
-                        <div class="team-item position-relative rounded overflow-hidden">
-                            <div class="overflow-hidden">
-                                <img class="img-fluid" src="~/assets/img/team-1.jpg" alt="">
-                            </div>
-                            <div class="team-text bg-light text-center p-4">
-                                <h5>@Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.LastName)</h5>
-                                <p class="text-primary">@Html.DisplayFor(modelItem => item.Address)</p>
+
+
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="service-item bg-light rounded h-100 p-5">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle mb-4" style="width: 65px; height: 65px;">
+                        <i class="fa fa-heartbeat text-primary fs-4"></i>
+                    </div>
+                        <h4 class="mb-3">@Html.DisplayFor(modelItem => item.Name)</h4>
+                        <p class="mb-4">@Html.DisplayFor(modelItem => item.Description)</p>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+                            <div class="dropdown-menu rounded-0 rounded-bottom m-0">
+                                @foreach (var item2 in item.Services)
+                                {
+                                    <a asp-route-id="@item2.Id" asp-page="Details" asp-area="Services"  class="dropdown-item">@item2.Name</a>
+                                }
                             </div>
                         </div>
-                    </a>
                 </div>
+            </div>
             }
         </div>
     </div>
@@ -75,3 +80,4 @@
         </div>
     </div>
 </div>
+

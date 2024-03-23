@@ -1,19 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Domain.Entities;
 using PRN221.Project.Domain.Enums;
 using PRN221.Project.Infrastructure.Persistence;
+using PRN221.WebUi.Hubs;
 
 namespace PRN221.WebUi.Areas.Appointments.Pages;
 
 public class DeleteModel : PageModel
 {
     private readonly ApplicationDbContext _context;
-
-    public DeleteModel(ApplicationDbContext context)
+    private readonly IHubContext<SignalRServer> _signalRHub;
+    public DeleteModel(ApplicationDbContext context, IHubContext<SignalRServer> signalRHub)
     {
         _context = context;
+        _signalRHub = signalRHub;
     }
 
     [BindProperty] public Appointment Appointment { get; set; } = default!;
@@ -57,7 +60,7 @@ public class DeleteModel : PageModel
         
         _context.Appointments.Update(appointment);
         await _context.SaveChangesAsync();
-
+        await _signalRHub.Clients.All.SendAsync("LoadAppointments");
         return RedirectToPage("./Index");
     }
 }

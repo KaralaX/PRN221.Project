@@ -81,7 +81,6 @@
     <_ContentIncludedByDefault Remove="Areas\Departments\Pages\Delete.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Departments\Pages\Details.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Departments\Pages\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Departments\Pages\Index.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Departments\_ViewImports.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Departments\_ViewStart.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Users\Pages\Create.cshtml" />
@@ -185,6 +184,8 @@
     <None Include="wwwroot\assets\scss\bootstrap\scss\_type.scss" />
     <None Include="wwwroot\assets\scss\bootstrap\scss\_utilities.scss" />
     <None Include="wwwroot\assets\scss\bootstrap\scss\_variables.scss" />
+    <None Include="wwwroot\js\signalr\dist\browser\signalr.js" />
+    <None Include="wwwroot\js\signalr\dist\browser\signalr.min.js" />
     <None Include="wwwroot\lib\counterup\counterup.min.js" />
     <None Include="wwwroot\lib\easing\easing.js" />
     <None Include="wwwroot\lib\easing\easing.min.js" />
