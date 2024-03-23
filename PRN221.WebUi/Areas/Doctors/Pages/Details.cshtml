@@ -48,6 +48,42 @@
                 <dd class="col-sm-9 col-md-10 mb-3">
                     @Html.DisplayFor(model => model.Doctor.Gender)
                 </dd>
+                <dt class="col-sm-3 col-md-2">
+                    Rating
+                </dt>
+                <dd class="col-sm-9 col-md-10 mb-3">
+                    <i class="far fa-star mx-2 fa-xs text-yellow" style="margin-top: -0.16rem;">@Model.Rating</i>
+                </dd>
+                <dt class="col-sm-3 col-md-2">
+                    Detailed Reviews
+                </dt>
+                <dd class="col-sm-9 col-md-10 mb-3">
+                        <div class="col-md-8 col-lg-6">
+                            <div class="card shadow-0 border" style="background-color: white">
+                                <div class="card-body p-4">
+                                    @foreach (var item in Model.Appointments)
+                                    {
+                                        <div class="card mb-4">
+                                            <div class="card-body" style="background-color: white">
+                                                <p style="color:blue;">@item.ServiceReview?.Comment</p>
+
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="d-flex flex-row align-items-center">
+                                                        <p class="small mb-0 ms-2" style="color:black;">@item.Patient.FirstName @item.Patient.LastName</p>
+                                                    </div>
+                                                    <div class="d-flex flex-row align-items-center">
+                                                        <p class="small text-muted mb-0">About Dr. @item.Doctor.FirstName @item.Doctor.LastName</p>
+                                                        <i class="far fa-star mx-2 fa-xs text-yellow" style="margin-top: -0.16rem;"></i>
+                                                        <p class="small mb-0" style="color:blue;">@item.ServiceReview?.Rating</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                    </div>
+                </dd>
             </dl>
         </div>
         <div class="card-footer text-center">

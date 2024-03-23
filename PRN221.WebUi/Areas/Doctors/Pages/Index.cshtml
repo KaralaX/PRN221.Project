@@ -4,6 +4,17 @@
     ViewData["Title"] = "Index";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
+<form asp-asp-page="./Index" method="post">
+    <div class="form-action">
+        <p>
+            Find by name:
+            <input type="text" name="SearchString" value="@Model.CurrentFilter" />
+            <input type="submit" class="btn btn-primary" value="Search" />
+            <a asp-page="./Index">Return to List</a>
+        </p>
+
+    </div>
+</form>
 
 <div class="container-xxl py-5">
     <div class="container">

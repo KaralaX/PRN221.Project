@@ -16,6 +16,8 @@ namespace PRN221.WebUi.Areas.Doctors.Pages
         }
 
         public Doctor Doctor { get; set; } = default!;
+        public double Rating { get; set; } = default!;
+        public IList<Appointment> Appointments { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(Guid? id)
         {
@@ -32,6 +34,14 @@ namespace PRN221.WebUi.Areas.Doctors.Pages
             else
             {
                 Doctor = doctor;
+                Rating = _context.ServiceReviews.Include(x=>x.Appointment).Average(r=>r.Rating);
+                Appointments = await _context.Appointments
+                            .Include(x => x.ServiceReview)
+                            .Include(a => a.Doctor)
+                            .Include(a => a.Patient)
+                            .Include(a => a.Service)
+                            .Where(a => a.DoctorId.Equals(id))
+                            .ToListAsync();
             }
 
             return Page();
