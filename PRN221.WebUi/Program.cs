@@ -15,10 +15,6 @@ builder.Services.AddSignalR();
         .AddInfrastructureServices(builder.Configuration)
         .AddWebUiServices();
 }
-builder.Services.AddScoped<IVnPayService, VnPayService>();
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 {
@@ -31,19 +27,20 @@ var app = builder.Build();
     {
         await app.InitializeDatabaseAsync();
     }
-    app.MapHub<SignalRServer>("/signalRServer");
+
     app.UseHttpsRedirection();
     app.UseStaticFiles();
 
     app.UseRouting();
 
     app.UseSession();
-    
+
     app.UseAuthentication();
 
     app.UseAuthorization();
 
     app.MapRazorPages();
+    app.MapHub<SignalRServer>("/signalRServer");
 
     app.Run();
 }

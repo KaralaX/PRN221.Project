@@ -35,7 +35,7 @@ public static class DependencyInjection
 
         services.AddTransient<IEmailSender, EmailSender>();
 
-        services.AddTransient<IVnPayService, VnPayService>();
+        services.AddScoped<IVnPayService, VnPayService>();
         
         return services;
     }
