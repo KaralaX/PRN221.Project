@@ -8,8 +8,11 @@
 
     <ItemGroup>
       <Compile Remove="Common\**" />
+      <Compile Remove="Vnpay\**" />
       <EmbeddedResource Remove="Common\**" />
+      <EmbeddedResource Remove="Vnpay\**" />
       <None Remove="Common\**" />
+      <None Remove="Vnpay\**" />
     </ItemGroup>
 
     <ItemGroup>
@@ -27,7 +30,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Vnpay\" />
       <Folder Include="Persistence\Migrations\" />
     </ItemGroup>
 

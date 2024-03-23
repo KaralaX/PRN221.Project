@@ -1,0 +1,57 @@
+﻿@page "/Appointment/Review"
+@model ReviewAfterAppointmentModel
+
+@{
+    ViewData["Title"] = "ReviewAfterAppointment";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>ReviewAfterAppointment</h1>
+
+<h4>ServiceReview</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ServiceReview.AppointmentId" class="control-label"></label>
+                <input asp-for="ServiceReview.AppointmentId" class="form-control" value="@Model.AppointmentId" readonly/>
+                <span asp-validation-for="ServiceReview.AppointmentId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ServiceReview.Rating" class="control-label"></label>
+                <input asp-for="ServiceReview.Rating" class="form-control" type="number" max="5" min="1"/>
+                <span asp-validation-for="ServiceReview.Rating" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ServiceReview.Comment" class="control-label"></label>
+                <input asp-for="ServiceReview.Comment" class="form-control" />
+                <span asp-validation-for="ServiceReview.Comment" class="text-danger"></span>
+            </div>
+            @{
+                string dateNow = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+            }
+            <div class="form-group">
+                <label asp-for="ServiceReview.CreatedDateTime" class="control-label"></label>
+                <input asp-for="ServiceReview.CreatedDateTime" class="form-control" value="@dateNow" type="datetime" readonly />
+                <span asp-validation-for="ServiceReview.CreatedDateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="ServiceReview.UpdatedDateTime" class="form-control" type="hidden" />
+                <span asp-validation-for="ServiceReview.UpdatedDateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

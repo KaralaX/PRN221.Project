@@ -16,6 +16,8 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
     {
     }
 
+
+
     public DbSet<ApplicationUser> Users { get; set; } = null!;
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<Department> Departments => Set<Department>();
@@ -240,6 +242,6 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
     {
         base.OnConfiguring(optionsBuilder);
     
-        optionsBuilder.UseSqlServer("Server=(local);Database=PRN221.Project;User=sa;Password=sa;");
+        optionsBuilder.UseSqlServer("Server=(local);Database=PRN221.Project;User=sa;Password=123;");
     }
 }

@@ -1,0 +1,39 @@
+﻿@page
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Reviews";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Reviews</h1>
+
+<div class="row d-flex justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-0 border" style="background-color: white">
+            <div class="card-body p-4">
+                @* <div class="form-outline mb-4">
+                    <a asp-page="Create"><label class="form-label" for="addANote">+ Add a Comment</label></a>
+                </div> *@
+                @foreach (var item in Model.Appointments) {
+                <div class="card mb-4">
+                        <div class="card-body" style="background-color: black">
+                            <p style="color:blue;">@item.ServiceReview.Comment</p>
+
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row align-items-center">
+                                    <p class="small mb-0 ms-2" style="color:white;">@item.Patient.FirstName @item.Patient.LastName</p>
+                            </div>
+                            <div class="d-flex flex-row align-items-center">
+                                    <p class="small text-muted mb-0">About Dr. @item.Doctor.FirstName @item.Doctor.LastName</p>
+                                <i class="far fa-star mx-2 fa-xs text-yellow" style="margin-top: -0.16rem;"></i>
+                                    <p class="small mb-0" style="color:yellow;">@item.ServiceReview.Rating</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
