@@ -243,7 +243,7 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlServer("Server=(local);Database=PRN221.Project;User=sa;Password=12345678;");
+            optionsBuilder.UseSqlServer("Server=(local);Database=PRN221.Project;User=sa;Password=123;");
         }
     }
 }

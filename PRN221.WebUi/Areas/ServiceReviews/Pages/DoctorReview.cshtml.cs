@@ -8,31 +8,36 @@ using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Domain.Entities;
 using PRN221.Project.Infrastructure.Persistence;
 
-namespace PRN221.WebUi.Areas.ServiceReviews.Pages
+namespace PRN221.WebUi.Areas.ServiceReviews.Pages;
+
+public class DoctorReviewModel : PageModel
 {
-    public class DoctorReviewModel : PageModel
+    private readonly ApplicationDbContext _context;
+
+    public DoctorReviewModel(PRN221.Project.Infrastructure.Persistence.ApplicationDbContext context)
     {
-        private readonly PRN221.Project.Infrastructure.Persistence.ApplicationDbContext _context;
+        _context = context;
+    }
 
-        public DoctorReviewModel(PRN221.Project.Infrastructure.Persistence.ApplicationDbContext context)
-        {
-            _context = context;
-        }
+    public IList<Appointment> Appointments { get; set; } = default!;
+    public Doctor Doctor { get; set; } = default!;
 
-        public IList<Appointment> Appointments { get;set; } = default!;
-        public Doctor Doctor { get; set; }
+    public async Task<IActionResult> OnGetAsync(Guid? Id)
+    {
+        var doctor = _context.Doctors.FirstOrDefault(x => x.Id.Equals(Id));
 
-        public async Task OnGetAsync(Guid? doctorId)
-        {
-            if (_context.Appointments != null)
-            {
-                Appointments = await _context.Appointments
-                .Include(a => a.Doctor)
-                .Include(a => a.Patient)
-                .Include(a => a.Service).Where(a => a.DoctorId.Equals(doctorId)).ToListAsync();
+        if(doctor is null ) return NotFound();
 
-                Doctor = _context.Doctors.Where(x => x.Id.Equals(doctorId)).First();
-            }
-        }
+        Doctor = doctor;
+
+        Appointments = await _context.Appointments
+                            .Include(x => x.ServiceReview)
+                            .Include(a => a.Doctor)
+                            .Include(a => a.Patient)
+                            .Include(a => a.Service)
+                            .Where(a => a.DoctorId.Equals(Id))
+                            .ToListAsync();
+
+        return Page();
     }
 }
