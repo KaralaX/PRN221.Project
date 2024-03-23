@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Domain.Entities;
 using PRN221.Project.Infrastructure.Persistence;
 
-namespace PRN221.WebUi.Areas.Doctors.Pages.Manage;
+namespace PRN221.WebUi.Areas.Appointments.Pages.Manage;
 
 public class DetailsModel : PageModel
 {
@@ -15,7 +15,7 @@ public class DetailsModel : PageModel
         _context = context;
     }
 
-    public Doctor Doctor { get; set; } = default!;
+    public Appointment Appointment { get; set; } = default!; 
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
@@ -24,16 +24,19 @@ public class DetailsModel : PageModel
             return NotFound();
         }
 
-        var doctor = await _context.Doctors
-            .Include(x => x.Services)
+        var appointment = await _context.Appointments
+            .Include(x => x.Doctor)
+            .Include(x => x.Patient)
+            .Include(x => x.Service)
+            .Include(x => x.MedicalBill)
             .FirstOrDefaultAsync(m => m.Id == id);
 
-        if (doctor == null)
+        if (appointment == null)
         {
             return NotFound();
         }
 
-        Doctor = doctor;
+        Appointment = appointment;
 
         return Page();
     }

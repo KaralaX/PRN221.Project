@@ -15,7 +15,7 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <div class="form-group form-floating mb-3">
-            <select asp-for="Appointment.ServiceId" class="form-control form-select" asp-items="ViewBag.Services" onchange="checkFormValidity()">
+            <select asp-for="Appointment.ServiceId" class="form-control form-select" asp-items="ViewBag.Services" onchange="onServiceChange()">
                 <option>Choose a service</option>
             </select>
             <label asp-for="Appointment.ServiceId">Service</label>
@@ -62,6 +62,50 @@
 @section Scripts
 {
     <script>
+        function onServiceChange(){
+            checkFormValidity();
+            function fetchDoctors(){
+                const serviceId = document.getElementById('Appointment_ServiceId').value;
+            
+                // Make AJAX request to fetch doctors based on the selected service
+                $.ajax({
+                    url: '/Appointments/Book?handler=DoctorsByService',
+                    method: 'GET',
+                    data: { serviceId: serviceId },
+                    success: function (data) {
+                        console.log(data);
+                        const doctorSelect = document.getElementById('Appointment_DoctorId');
+                        doctorSelect.innerHTML = '';
+            
+                        // Parse JSON data if it's a string
+                        if (typeof data === 'string') {
+                            data = JSON.parse(data);
+                        }
+            
+                        // Check if data is an array before using forEach
+                        if (Array.isArray(data)) {
+                            data.forEach(function (doctor) {
+                                const option = document.createElement('option');
+                                option.value = doctor.value;
+                                option.text = doctor.text;
+                                doctorSelect.appendChild(option);
+                            });
+                        } else {
+                            console.error('Response data is not an array:', data);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            }
+            fetchDoctors();
+        }
+        
+        function onDoctorChange(){
+            checkFormValidity();    
+        }
+        
         function checkFormValidity() {
             const serviceSelect = document.getElementById('Appointment_ServiceId');
             const doctorSelect = document.getElementById('Appointment_DoctorId');
@@ -93,9 +137,7 @@
             });
         }
         function timeSlotSelected(button) {
-            console.log("click");
             const selectedTime = $(button).data('time');
-            console.log(selectedTime);
             $('#Appointment_Time').val(selectedTime);
             $('.time-slot-btn').removeClass('btn-primary').addClass('btn-outline-primary');
             $(button).removeClass('btn-outline-primary').addClass('btn-primary');

@@ -45,11 +45,11 @@ public class Book : PageModel
 
     public string FilePath { get; set; }
 
-    public async void OnGetAsync()
+    public IActionResult OnGet()
     {
         if (!_signInManager.IsSignedIn(User))
-        {
-            RedirectToPage("/Account/Login");
+        { 
+            return LocalRedirect("/Identity/Account/Login");
         }
 
         ViewData["Doctors"] = _context.Doctors.ToList().Select(x => new SelectListItem
@@ -63,22 +63,17 @@ public class Book : PageModel
             Text = x.Name,
             Value = x.Id.ToString()
         }).ToList();
-        
+
         var userId = _userManager.GetUserId(User);
 
         var patient = _context.Patients.Include(x => x.PatientMedicalRecord).FirstOrDefault(x => x.UserId == userId);
 
         if (patient is not null)
         {
-            FilePath = patient.PatientMedicalRecord?.FileName??string.Empty;
+            FilePath = patient.PatientMedicalRecord?.FileName ?? string.Empty;
         }
-    }
 
-    public class AppointmentSlot
-    {
-        public TimeSpan StartTime { get; set; }
-        public string Duration { get; set; }
-        public bool IsBooked { get; set; }
+        return Page();
     }
 
     public PartialViewResult OnGetAvailableSlotsPartial(DateTime date, Guid doctorId)
@@ -129,6 +124,21 @@ public class Book : PageModel
         };
     }
 
+    public IActionResult OnGetDoctorsByService(Guid serviceId)
+    {
+        var doctors = _context.Doctors
+            .Where(d => d.Services
+                .Any(s => s.Id == serviceId))
+            .Select(d => new
+            {
+                Value = d.Id,
+                Text = d.FirstName + " " + d.LastName
+            })
+            .ToList();
+
+        return new JsonResult(doctors);
+    }
+
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
@@ -169,7 +179,7 @@ public class Book : PageModel
         var filePath = string.Empty;
 
         var fileName = string.Empty;
-        
+
         if (Appointment.File is { Length: > 0 })
         {
             var uploadsDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
@@ -189,6 +199,7 @@ public class Book : PageModel
 
             await stream.FlushAsync();
         }
+
         var medicalRecord = patient.PatientMedicalRecord;
 
         if (medicalRecord is null)
@@ -199,11 +210,11 @@ public class Book : PageModel
                 FileName = fileName
             };
         }
-        else
+        else if(fileName is {Length: > 0})
         {
             medicalRecord.FileName = fileName;
         }
-        
+
         _context.Patients.Update(patient);
 
         await _context.SaveChangesAsync();

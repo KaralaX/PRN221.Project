@@ -1,0 +1,59 @@
+@page
+@model PRN221.WebUi.Areas.Appointments.Pages.Manage.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<table class="table table-borderless table-striped table-hover">
+    <thead>
+    <tr>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Appointment[0].Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Appointment[0].Time)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Appointment[0].Patient)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Appointment[0].Service)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Appointment[0].Status)
+        </th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Appointment)    
+    {
+        <tr>
+            <td>
+                @item.Date.ToString("MM/dd/yyyy")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+            <td>
+                @item.Patient.FirstName @item.Patient.LastName
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Service.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                <a class="btn btn-outline-primary" asp-page="./Details" asp-route-id="@item.Id">Details</a>
+                <a class="btn btn-outline-primary" asp-page="./Status" asp-route-id="@item.Id">Update Status</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -7,15 +7,16 @@ using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Domain.Constant;
 using PRN221.Project.Domain.Entities;
 using PRN221.Project.Infrastructure.Identity;
+using PRN221.Project.Infrastructure.Persistence;
 
 namespace PRN221.WebUi.Areas.Doctors.Pages.Manage;
 
 public class CreateModel : PageModel
 {
-    private readonly Project.Infrastructure.Persistence.ApplicationDbContext _context;
+    private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
     
-    public CreateModel(Project.Infrastructure.Persistence.ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public CreateModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
         _context = context;
         _userManager = userManager;

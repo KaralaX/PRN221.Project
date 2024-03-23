@@ -472,9 +472,12 @@ public class ApplicationDbContextInitializer
 
 
         if (await _roleManager.RoleExistsAsync(Roles.Admin)) return;
+        
         await _roleManager.CreateAsync(new IdentityRole(Roles.Admin));
         await _roleManager.CreateAsync(new IdentityRole(Roles.Patient));
         await _roleManager.CreateAsync(new IdentityRole(Roles.Doctor));
+        await _roleManager.CreateAsync(new IdentityRole(Roles.Staff));
+        
         await _userManager.CreateAsync(new ApplicationUser
         {
             UserName = _adminOptions.Value.UserName,
