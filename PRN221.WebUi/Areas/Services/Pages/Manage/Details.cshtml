@@ -10,7 +10,7 @@
 
 <div>
     <h4>Service</h4>
-    <hr />
+    <hr/>
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Service.Name)
@@ -28,7 +28,8 @@
             @Html.DisplayNameFor(model => model.Service.Status)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Service.Status)
+            @{ var status = Model.Service.Status ? "Active" : "Inactive"; }
+            @status
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Service.Price)
@@ -51,6 +52,6 @@
     </dl>
 </div>
 <div>
-    <a asp-page="./Edit" asp-route-id="@Model.Service?.Id">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
+    <a class="btn btn-primary" asp-page="./Edit" asp-route-id="@Model.Service?.Id">Edit</a>
+    <a class="btn btn-primary" asp-page="./Index">Back to List</a>
 </div>

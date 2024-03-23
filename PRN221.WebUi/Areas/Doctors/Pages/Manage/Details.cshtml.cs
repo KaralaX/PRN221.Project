@@ -24,8 +24,10 @@ public class DetailsModel : PageModel
             return NotFound();
         }
 
-        var doctor = await _context.Doctors.FirstOrDefaultAsync(m => m.Id == id);
-        
+        var doctor = await _context.Doctors
+            .Include(x => x.Services)
+            .FirstOrDefaultAsync(m => m.Id == id);
+
         if (doctor == null)
         {
             return NotFound();

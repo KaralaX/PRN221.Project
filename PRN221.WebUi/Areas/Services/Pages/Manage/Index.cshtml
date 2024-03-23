@@ -8,10 +8,10 @@
 
 <h1>Services</h1>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
+<div>
+    <a class="btn btn-primary" asp-page="Create">Create New</a>
+</div>
+<table class="table table-borderless table-striped table-hover">
     <thead>
     <tr>
         <th>
@@ -32,7 +32,7 @@
         <th>
             @Html.DisplayNameFor(model => model.Service[0].Department)
         </th>
-        <th></th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -59,9 +59,12 @@
                 @Html.DisplayFor(modelItem => item.Department.Description)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                <a class="btn btn-primary" asp-page="./Edit" asp-route-id="@item.Id">Edit</a> 
+                <a class="btn btn-info" asp-page="./Details" asp-route-id="@item.Id">Details</a> 
+                <a class="btn btn-danger" asp-page="./Delete" asp-route-id="@item.Id">
+                    @{ var action = item.Status ? "Deactivate" : "Activate"; }
+                    @action
+                </a>
             </td>
         </tr>
     }

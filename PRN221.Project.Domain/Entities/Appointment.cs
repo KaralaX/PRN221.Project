@@ -1,4 +1,6 @@
-﻿namespace PRN221.Project.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
+
+namespace PRN221.Project.Domain.Entities;
 
 public class Appointment
 {

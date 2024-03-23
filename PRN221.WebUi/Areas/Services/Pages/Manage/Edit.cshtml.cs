@@ -40,6 +40,8 @@ public class EditModel : PageModel
     // For more details, see https://aka.ms/RazorPagesCRUD.
     public async Task<IActionResult> OnPostAsync()
     {
+        ModelState.Remove("Service.Department");
+        
         if (!ModelState.IsValid)
         {
             return Page();
@@ -57,10 +59,8 @@ public class EditModel : PageModel
             {
                 return NotFound();
             }
-            else
-            {
-                throw;
-            }
+
+            throw;
         }
 
         return RedirectToPage("./Index");

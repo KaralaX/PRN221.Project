@@ -8,6 +8,7 @@ using PRN221.Project.Application.Common.Services;
 using PRN221.Project.Infrastructure.Identity;
 using PRN221.Project.Infrastructure.Persistence;
 using PRN221.Project.Infrastructure.Services;
+using PRN221.Project.Infrastructure.VnPay.Services;
 
 namespace PRN221.Project.Infrastructure;
 
@@ -34,6 +35,8 @@ public static class DependencyInjection
 
         services.AddTransient<IEmailSender, EmailSender>();
 
+        services.AddTransient<IVnPayService, VnPayService>();
+        
         return services;
     }
 }

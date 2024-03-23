@@ -25,7 +25,9 @@ public class DeleteModel : PageModel
             return NotFound();
         }
 
-        var service = await _context.Services.FirstOrDefaultAsync(m => m.Id == id);
+        var service = await _context.Services
+            .Include(x => x.Department)
+            .FirstOrDefaultAsync(m => m.Id == id);
 
         if (service == null)
         {
@@ -44,12 +46,13 @@ public class DeleteModel : PageModel
         }
         var service = await _context.Services.FindAsync(id);
 
-        if (service != null)
-        {
-            Service = service;
-            _context.Services.Remove(Service);
-            await _context.SaveChangesAsync();
-        }
+        if (service == null) return RedirectToPage("./Index");
+        
+        service.Status = !service.Status;
+
+        _context.Services.Update(service);
+            
+        await _context.SaveChangesAsync();
 
         return RedirectToPage("./Index");
     }

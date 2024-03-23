@@ -8,8 +8,16 @@
 
     <ItemGroup>
       <Compile Remove="Common\**" />
+      <Compile Remove="Vnpay\**" />
+      <Compile Include="Vnpay\Libraries\VnPayLibrary.cs" />
+      <Compile Include="Vnpay\Models\PaymentInformationModel.cs" />
+      <Compile Include="Vnpay\Models\PaymentResponseModel.cs" />
+      <Compile Include="Vnpay\Services\IVnPayService.cs" />
+      <Compile Include="Vnpay\Services\VnPayService.cs" />
       <EmbeddedResource Remove="Common\**" />
+      <EmbeddedResource Remove="Vnpay\**" />
       <None Remove="Common\**" />
+      <None Remove="Vnpay\**" />
     </ItemGroup>
 
     <ItemGroup>

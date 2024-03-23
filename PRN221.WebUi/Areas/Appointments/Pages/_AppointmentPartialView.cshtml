@@ -1,4 +1,4 @@
-﻿@model List<Book.AppointmentSlot>
+﻿@model List<AppointmentSlot>
 <div>
 <label for="selectedTimeslot">Time</label>
 </div>
@@ -10,9 +10,18 @@
         <div class="form-check form-check-inline">
             @if (timeslot.IsBooked)
             {
-                <button type="button" class="btn btn-outline-dark m-1 time-slot-btn" data-time="@timeslot.StartTime" disabled onclick="timeSlotSelected(this)">
-                    @timeslot.Duration
-                </button>    
+                if (timeslot.IsCurrent)
+                {
+                    <button type="button" class="btn btn-outline-info m-1 time-slot-btn" data-time="@timeslot.StartTime" onclick="timeSlotSelected(this)">
+                        @timeslot.Duration
+                    </button>    
+                }
+                else
+                {
+                    <button type="button" class="btn btn-outline-dark m-1 time-slot-btn" data-time="@timeslot.StartTime" disabled onclick="timeSlotSelected(this)">
+                        @timeslot.Duration
+                    </button>    
+                }
             }
             else
             {
@@ -22,12 +31,11 @@
             }
         </div>
     }
-}
+}   
 else
 {
     <span>No available time slots for the selected date and doctor.</span>
 }
-
 <script>
     function timeSlotSelected(button) {
         console.log("click");
@@ -36,5 +44,5 @@ else
                         $('#Appointment_Time').val(selectedTime);
                         $('.time-slot-btn').removeClass('btn-primary').addClass('btn-outline-primary');
                         $(button).removeClass('btn-outline-primary').addClass('btn-primary');
-    };
+    }
 </script>

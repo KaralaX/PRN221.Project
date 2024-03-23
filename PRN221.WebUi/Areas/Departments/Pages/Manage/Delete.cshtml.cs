@@ -19,8 +19,7 @@ public class DeleteModel : PageModel
         _signalRHub = signalRHub;
     }
 
-    [BindProperty]
-    public Department Department { get; set; } = default!;
+    [BindProperty] public Department Department { get; set; } = default!;
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
@@ -35,10 +34,9 @@ public class DeleteModel : PageModel
         {
             return NotFound();
         }
-        else 
-        {
-            Department = department;
-        }
+
+        Department = department;
+
         return Page();
     }
 
@@ -48,12 +46,13 @@ public class DeleteModel : PageModel
         {
             return NotFound();
         }
+
         var department = await _context.Departments.FindAsync(id);
 
         if (department != null)
         {
-            Department = department;
-            _context.Departments.Remove(Department);
+            department.Status = !department.Status;
+            _context.Departments.Update(department);
             await _context.SaveChangesAsync();
             await _signalRHub.Clients.All.SendAsync("LoadDepartments");
         }

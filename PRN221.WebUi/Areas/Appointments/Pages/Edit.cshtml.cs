@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,16 +8,16 @@ using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Application.Common.Interfaces;
 using PRN221.Project.Domain.Entities;
+using PRN221.Project.Domain.Enums;
 using PRN221.Project.Infrastructure.Identity;
-using PRN221.Project.Infrastructure.Persistence;
 using PRN221.WebUi.Hubs;
 
 namespace PRN221.WebUi.Areas.Appointments.Pages;
 
 public class EditModel : PageModel
 {
-    private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IApplicationDbContext _context;
+    private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IHubContext<SignalRServer> _signalRHub;
@@ -30,10 +26,9 @@ public class EditModel : PageModel
         UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
         IHubContext<SignalRServer> signalRHub)
     {
-        _webHostEnvironment = webHostEnvironment;
         _context = context;
+        _webHostEnvironment = webHostEnvironment;
         _userManager = userManager;
-        _signInManager = signInManager;
         _signalRHub = signalRHub;
     }
 
@@ -41,6 +36,7 @@ public class EditModel : PageModel
 
     public class InputModel
     {
+        public Guid AppointmentId { get; set; }
         public Guid DoctorId { get; set; }
         [Required] public DateTime Date { get; set; }
         [Required] public TimeSpan Time { get; set; }
@@ -48,7 +44,9 @@ public class EditModel : PageModel
     }
 
     public string FilePath { get; set; }
-
+    public DateTime BookedDate { get; set; }
+    public TimeSpan BookedTime { get; set; }
+    
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
         if (id == null)
@@ -62,7 +60,7 @@ public class EditModel : PageModel
             .ThenInclude(x => x.PatientMedicalRecord)
             .Include(x => x.Service)
             .FirstOrDefaultAsync(m => m.Id == id);
-        
+
         if (appointment == null)
         {
             return NotFound();
@@ -88,22 +86,27 @@ public class EditModel : PageModel
 
         Appointment = new InputModel
         {
+            AppointmentId = appointment.Id,
             DoctorId = appointment.DoctorId,
             Date = appointment.Date,
             Time = appointment.Time
         };
 
-        FilePath = appointment.Patient.PatientMedicalRecord?.FileName;
+        BookedDate = appointment.Date;
+        BookedTime = appointment.Time;
+        
+        FilePath = appointment.Patient.PatientMedicalRecord?.FileName ?? string.Empty;
         return Page();
     }
-    public PartialViewResult OnGetAvailableSlotsPartial(DateTime date, Guid doctorId)
+
+    public PartialViewResult OnGetAvailableSlotsPartial(DateTime date, Guid doctorId, DateTime bookedDate, TimeSpan bookedTime)
     {
         var bookedAppointments = _context.Appointments
             .Where(x =>
                 x.DoctorId == doctorId
                 && x.Date.Date == date.Date);
 
-        var availableTimeSlots = new List<Book.AppointmentSlot>();
+        var availableTimeSlots = new List<AppointmentSlot>();
 
         var startTime = new TimeSpan(9, 0, 0);
         var endTime = new TimeSpan(17, 0, 0);
@@ -114,7 +117,7 @@ public class EditModel : PageModel
         {
             var next = currentTime.Add(TimeSpan.FromMinutes(15));
 
-            var slot = new Book.AppointmentSlot
+            var slot = new AppointmentSlot
             {
                 StartTime = currentTime,
                 Duration = $@"{currentTime:hh\:mm} - {next:hh\:mm}",
@@ -126,40 +129,93 @@ public class EditModel : PageModel
                 slot.IsBooked = true;
             }
 
+            if (date == bookedDate.Date && currentTime == bookedTime)
+            {
+                slot.IsCurrent = true;
+            }
+            
             if (bookedAppointments.Any(a => a.Date.Date == date.Date && a.Time == currentTime))
                 slot.IsBooked = true;
 
             availableTimeSlots.Add(slot);
 
-            currentTime = next;
+            currentTime = next; 
         }
 
         return new PartialViewResult
         {
             ViewName = "_AppointmentPartialView",
-            ViewData = new ViewDataDictionary<List<Book.AppointmentSlot>>(ViewData, availableTimeSlots)
+            ViewData = new ViewDataDictionary<List<AppointmentSlot>>(ViewData, availableTimeSlots)
         };
     }
+
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
         {
             return Page();
         }
+        
+        var userId = _userManager.GetUserId(User);
 
-        try
+        var patient = _context.Patients.Include(x => x.PatientMedicalRecord).FirstOrDefault(x => x.UserId == userId);
+
+        if (patient is null)
         {
-            await _context.SaveChangesAsync();
+            return Page();
             await _signalRHub.Clients.All.SendAsync("LoadAppointments");
         }
-        catch (DbUpdateConcurrencyException)
+
+        var appointment = await _context.Appointments.FindAsync(Appointment.AppointmentId);
+
+        appointment.Date = Appointment.Date;
+        appointment.Time = Appointment.Time;
+        
+        _context.Appointments.Update(appointment);
+
+        //Save medical records
+        var filePath = string.Empty;
+
+        var fileName = string.Empty;
+
+        if (Appointment.File is { Length: > 0 })
         {
-            // if (!AppointmentExists(Appointment.Id))
-            // {
-            //     return NotFound();
-            // }
-            throw;
+            var uploadsDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+
+            if (!Directory.Exists(uploadsDirectory))
+            {
+                Directory.CreateDirectory(uploadsDirectory);
+            }
+
+            fileName = Guid.NewGuid() + Path.GetExtension(Appointment.File.FileName);
+
+            filePath = Path.Combine(uploadsDirectory, fileName);
+
+            using var stream = new FileStream(filePath, FileMode.Create);
+
+            await Appointment.File.CopyToAsync(stream);
+
+            await stream.FlushAsync();
         }
+
+        var medicalRecord = patient.PatientMedicalRecord;
+
+        if (medicalRecord is null)
+        {
+            patient.PatientMedicalRecord = new PatientMedicalRecord
+            {
+                CreatedDate = DateTime.Now,
+                FileName = fileName
+            };
+        }
+        else
+        {
+            medicalRecord.FileName = fileName;
+        }
+
+        _context.Patients.Update(patient);
+
+        await _context.SaveChangesAsync();
 
         return RedirectToPage("./Index");
     }
