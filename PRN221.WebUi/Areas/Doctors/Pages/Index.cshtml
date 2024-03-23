@@ -4,26 +4,25 @@
     ViewData["Title"] = "Index";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
-<form asp-asp-page="./Index" method="post">
-    <div class="form-action">
-        <p>
-            Find by name:
-            <input type="text" name="SearchString" value="@Model.CurrentFilter" />
-            <input type="submit" class="btn btn-primary" value="Search" />
-            <a asp-page="./Index">Return to List</a>
-        </p>
-
-    </div>
-</form>
-
 <div class="container-xxl py-5">
     <div class="container">
         <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
             <p class="d-inline-block border rounded-pill py-1 px-4">Doctors</p>
             <h1>Our Experience Doctors</h1>
         </div>
-
-        <div class="row g-4">
+        <div class="mb-3">
+            <form method="get">
+                <div class="form-action">
+                    <div class="form-group form-floating mb-3">
+                        <input type="text" name="SearchString" class="form-control" value="@Model.CurrentFilter"/>
+                        <label class="form-label">Find By Name:</label>
+                    </div>
+                    <input type="submit" class="btn btn-primary" value="Search"/>
+                    <a asp-page="./Index" class="btn btn-primary">Reset</a>
+                </div>
+            </form>
+        </div>
+        <div class="row g-4 mt-10">
             @foreach (var item in Model.Doctor)
             {
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
@@ -53,10 +52,18 @@
                 <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+09 444 44446</p>
                 <p class="mb-2"><i class="fa fa-envelope me-3"></i>clinik@gmail.com</p>
                 <div class="d-flex pt-2">
-                    <a class="btn btn-outline-light btn-social rounded-circle" href=""><i class="fab fa-twitter"></i></a>
-                    <a class="btn btn-outline-light btn-social rounded-circle" href=""><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-outline-light btn-social rounded-circle" href=""><i class="fab fa-youtube"></i></a>
-                    <a class="btn btn-outline-light btn-social rounded-circle" href=""><i class="fab fa-linkedin-in"></i></a>
+                    <a class="btn btn-outline-light btn-social rounded-circle" href="">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a class="btn btn-outline-light btn-social rounded-circle" href="">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a class="btn btn-outline-light btn-social rounded-circle" href="">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a class="btn btn-outline-light btn-social rounded-circle" href="">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">

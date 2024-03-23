@@ -202,8 +202,4 @@
     <None Include="wwwroot\lib\wow\wow.min.js" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\uploads\" />
-  </ItemGroup>
-
 </Project>

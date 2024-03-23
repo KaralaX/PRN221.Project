@@ -17,28 +17,14 @@ public class Index : PageModel
     public string CurrentFilter { get; set; }
     public IList<Doctor> Doctor { get; set; } = default!;
 
-    public async Task OnGetAsync()
+    public async Task OnGetAsync(string? searchString)
     {
-        if (_context.Doctors != null)
-        {
-            Doctor = await _context.Doctors.ToListAsync();
-        }
+        CurrentFilter = searchString ?? string.Empty;
+        
+        Doctor = await _context.Doctors
+            .Where(x => searchString == null
+                        || ((x.FirstName ?? string.Empty).Contains(searchString)
+                            || (x.LastName ?? string.Empty).Contains(searchString)))
+            .ToListAsync();
     }
-
-
-    public async Task OnPostAsync(string searchString)
-    {
-        CurrentFilter = searchString;
-
-        IQueryable<Doctor> doctorIQ = from s in _context.Doctors
-                                     select s;
-
-        if (!String.IsNullOrEmpty(searchString))
-        {
-            doctorIQ = doctorIQ.Where(s => s.FirstName.Contains(searchString) || s.LastName.Contains(searchString));
-        }
-
-        Doctor = doctorIQ.ToList();
-    }
-
 }
