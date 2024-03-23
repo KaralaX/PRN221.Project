@@ -57,12 +57,12 @@
                     <form method="post" enctype="multipart/form-data">
                         <div class="row g-3">
                             <div class="col-12 col-sm-6">
-                                <select style="height: 55px" asp-for="Appointment.ServiceId" class="form-select border-0" asp-items="ViewBag.Services" onchange="checkFormValidity()">
+                                <select style="height: 55px" asp-for="Appointment.ServiceId" class="form-select border-0" asp-items="ViewBag.Services" onchange="onServiceChange()">
                                     <option>Choose a service</option>
                                 </select>
                             </div>
                             <div class="col-12 col-sm-6">
-                                <select style="height: 55px" asp-for="Appointment.DoctorId" class="form-select border-0" asp-items="ViewBag.Doctors" onchange="checkFormValidity()">
+                                <select style="height: 55px" asp-for="Appointment.DoctorId" class="form-select border-0" asp-items="ViewBag.Doctors" onchange="onDoctorChange()">
                                     <option>Choose a doctor</option>
                                 </select>
                             </div>
@@ -214,7 +214,24 @@
 
 @section Scripts
 {
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script>
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/signalRServer")
+            .build();
+        
+        connection.on("LoadAppointmentSlots", function () {
+            var date = jQuery('#Appointment_Date').val();
+            
+            console.log(date);
+            
+            loadTimeSlotsPartial(date)
+        });
+        
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
+    
         function onServiceChange(){
             checkFormValidity();
             function fetchDoctors(){
@@ -294,6 +311,6 @@
             $('#Appointment_Time').val(selectedTime);
             $('.time-slot-btn').removeClass('btn-primary').addClass('btn-outline-primary');
             $(button).removeClass('btn-outline-primary').addClass('btn-primary');
-        };
+        }
     </script>
 }

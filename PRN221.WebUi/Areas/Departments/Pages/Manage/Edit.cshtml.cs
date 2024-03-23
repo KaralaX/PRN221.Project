@@ -1,18 +1,23 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using PRN221.Project.Domain.Constant;
 using PRN221.Project.Domain.Entities;
 using PRN221.Project.Infrastructure.Persistence;
+using PRN221.WebUi.Hubs;
 
 namespace PRN221.WebUi.Areas.Departments.Pages.Manage;
-
+[Authorize(Roles = Roles.Admin)]
 public class EditModel : PageModel
 {
     private readonly ApplicationDbContext _context;
-
-    public EditModel(ApplicationDbContext context)
+    private readonly IHubContext<SignalRServer> _signalRHub;
+    public EditModel(ApplicationDbContext context, IHubContext<SignalRServer> signalRHub)
     {
         _context = context;
+        _signalRHub = signalRHub;
     }
 
     [BindProperty]
@@ -46,6 +51,8 @@ public class EditModel : PageModel
         try
         {
             await _context.SaveChangesAsync();
+
+            await _signalRHub.Clients.All.SendAsync("LoadDepartments");
         }
         catch (DbUpdateConcurrencyException)
         {

@@ -1,6 +1,6 @@
 ﻿@model List<AppointmentSlot>
 <div>
-<label for="selectedTimeslot">Time</label>
+    <label for="selectedTimeslot">Time</label>
 </div>
 
 @if (Model.Any())
@@ -14,13 +14,13 @@
                 {
                     <button type="button" class="btn btn-outline-info m-1 time-slot-btn" data-time="@timeslot.StartTime" onclick="timeSlotSelected(this)">
                         @timeslot.Duration
-                    </button>    
+                    </button>
                 }
                 else
                 {
                     <button type="button" class="btn btn-outline-dark m-1 time-slot-btn" data-time="@timeslot.StartTime" disabled onclick="timeSlotSelected(this)">
                         @timeslot.Duration
-                    </button>    
+                    </button>
                 }
             }
             else
@@ -31,7 +31,7 @@
             }
         </div>
     }
-}   
+}
 else
 {
     <span>No available time slots for the selected date and doctor.</span>

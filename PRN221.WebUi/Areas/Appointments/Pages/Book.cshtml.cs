@@ -223,7 +223,7 @@ public class Book : PageModel
         _context.Patients.Update(patient);
 
         await _context.SaveChangesAsync();
-        await _signalRHub.Clients.All.SendAsync("LoadAppointments");
+        await _signalRHub.Clients.All.SendAsync("LoadAppointmentSlots");
         return RedirectToPage("./Index");
     }
 }

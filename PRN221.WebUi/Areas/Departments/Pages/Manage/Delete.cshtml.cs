@@ -1,13 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Application.Common.Interfaces;
+using PRN221.Project.Domain.Constant;
 using PRN221.Project.Domain.Entities;
 using PRN221.WebUi.Hubs;
 
 namespace PRN221.WebUi.Areas.Departments.Pages.Manage;
-
+[Authorize(Roles = Roles.Admin)]
 public class DeleteModel : PageModel
 {
     private readonly IApplicationDbContext _context;

@@ -5,10 +5,9 @@ var connection = new signalR.HubConnectionBuilder()
     .build();
 
 connection.on("LoadDepartments", function () {
-    location.href = '/Departments/Manage/Index'
+    console.log("bruh");
+    location.href = '/Departments/Manage';
 });
-
-
 
 connection.start().catch(function (err) {
     return console.error(err.toString());
