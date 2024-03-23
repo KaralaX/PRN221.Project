@@ -242,6 +242,6 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
     {
         base.OnConfiguring(optionsBuilder);
     
-        optionsBuilder.UseSqlServer("Server=(local);Database=PRN221.Project;User=sa;Password=123;");
+        optionsBuilder.UseSqlServer("Server=(local);Database=PRN221.Project;User=sa;Password=sa;");
     }
 }
