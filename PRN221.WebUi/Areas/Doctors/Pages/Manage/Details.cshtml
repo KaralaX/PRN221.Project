@@ -10,7 +10,7 @@
 
 <div>
     <h4>Doctor</h4>
-    <hr />
+    <hr/>
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Doctor.Address)
@@ -43,10 +43,13 @@
             @Html.DisplayFor(model => model.Doctor.Gender)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Doctor.UserId)
+            @Html.DisplayNameFor(model => model.Doctor.Services)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Doctor.UserId)
+            @foreach (var service in Model.Doctor.Services)
+            {
+               <span class="badge rounded-pill text-bg-primary" style="color: black">@service.Name</span>
+            }
         </dd>
     </dl>
 </div>

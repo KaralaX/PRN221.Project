@@ -6,12 +6,12 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<h4>Update Appointment</h4>
+<h1>Update Appointment</h1>
 <hr/>
 <div class="row">
     <form method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
+        <input asp-for="Appointment.AppointmentId" type="hidden"/>
         <div class="form-group form-floating mb-3">
             <select class="form-control form-select" asp-items="ViewBag.Services" disabled>
             </select>
@@ -58,11 +58,14 @@
 {
     <script>
         $(document).ready(function() {
-            loadTimeSlotsPartial(@Model.Appointment.Date.ToString("MM/dd/yyyy"));
+            console.log('@Model.Appointment.Date');
+            loadTimeSlotsPartial('@Model.Appointment.Date.ToString("MM/dd/yyyy")');
          });
     
         function loadTimeSlotsPartial(date) {
             const doctorId = '@Model.Appointment.DoctorId';
+            const bookedDate = '@Model.BookedDate.Date.ToString("MM/dd/yyyy")';
+            const bookedTime = '@Model.BookedTime';
             
             $.ajax({
                 url: '/Appointments/Edit',
@@ -70,7 +73,9 @@
                 data: {
                     handler: 'AvailableSlotsPartial',
                     date: date,
-                    doctorId: doctorId
+                    doctorId: doctorId,
+                    bookedDate: bookedDate,
+                    bookedTime: bookedTime
                 },
                 success: function(response) {
                     document.getElementById('timeSlotsPartial').innerHTML = response;

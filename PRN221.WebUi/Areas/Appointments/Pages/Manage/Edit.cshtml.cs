@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PRN221.Project.Domain.Entities;
 using PRN221.Project.Infrastructure.Persistence;
 
-namespace PRN221.WebUi.Areas.Services.Pages.Manage;
+namespace PRN221.WebUi.Areas.Appointments.Pages.Manage;
 
 public class EditModel : PageModel
 {
@@ -16,8 +16,7 @@ public class EditModel : PageModel
         _context = context;
     }
 
-    [BindProperty]
-    public Service Service { get; set; } = default!;
+    [BindProperty] public Appointment Appointment { get; set; } = default!;
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
@@ -26,28 +25,27 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        var service =  await _context.Services.FirstOrDefaultAsync(m => m.Id == id);
-        if (service == null)
+        var appointment = await _context.Appointments.FirstOrDefaultAsync(m => m.Id == id);
+        if (appointment == null)
         {
             return NotFound();
         }
-        Service = service;
-        ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Description");
+
+        Appointment = appointment;
+        ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "UserId");
+        ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "UserId");
+        ViewData["ServiceId"] = new SelectList(_context.Services, "Id", "Description");
         return Page();
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see https://aka.ms/RazorPagesCRUD.
     public async Task<IActionResult> OnPostAsync()
     {
-        ModelState.Remove("Service.Department");
-        
         if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        _context.Attach(Service).State = EntityState.Modified;
+        _context.Attach(Appointment).State = EntityState.Modified;
 
         try
         {
@@ -55,7 +53,7 @@ public class EditModel : PageModel
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!ServiceExists(Service.Id))
+            if (!AppointmentExists(Appointment.Id))
             {
                 return NotFound();
             }
@@ -66,8 +64,8 @@ public class EditModel : PageModel
         return RedirectToPage("./Index");
     }
 
-    private bool ServiceExists(Guid id)
+    private bool AppointmentExists(Guid id)
     {
-        return (_context.Services?.Any(e => e.Id == id)).GetValueOrDefault();
+        return (_context.Appointments?.Any(e => e.Id == id)).GetValueOrDefault();
     }
 }

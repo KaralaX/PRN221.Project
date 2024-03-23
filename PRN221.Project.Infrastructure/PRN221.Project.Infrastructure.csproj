@@ -31,6 +31,7 @@
 
     <ItemGroup>
       <Folder Include="Persistence\Migrations\" />
+      <Folder Include="Vnpay\Services\" />
     </ItemGroup>
 
 </Project>

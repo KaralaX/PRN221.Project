@@ -8,7 +8,7 @@ public static class DependencyInjection
     public static IServiceCollection AddWebUiServices(this IServiceCollection services)
     {
         services.AddRazorPages();
-
+        
         services.AddScoped<IUser, CurrentUser>();
 
         services.ConfigureApplicationCookie(options => options.AccessDeniedPath = "/Identity/Account/AccessDenied");

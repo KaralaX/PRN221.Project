@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using PRN221.Project.Domain.Entities;
+using NuGet.Packaging;
 using PRN221.Project.Infrastructure.Persistence;
 
 namespace PRN221.WebUi.Areas.Doctors.Pages.Manage;
@@ -15,8 +16,18 @@ public class EditModel : PageModel
         _context = context;
     }
 
-    [BindProperty]
-    public Doctor Doctor { get; set; } = default!;
+    [BindProperty] public DoctorModel Doctor { get; set; } = default!;
+
+    public class DoctorModel
+    {
+        public Guid Id { get; set; }
+        public string? Address { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public DateTime? Dob { get; set; }
+        public string? Gender { get; set; }
+        public ICollection<Guid> Services { get; set; } = new HashSet<Guid>();
+    }
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
@@ -25,17 +36,28 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        var doctor =  await _context.Doctors.FirstOrDefaultAsync(m => m.Id == id);
+        var doctor = await _context.Doctors.Include(x => x.Services).FirstOrDefaultAsync(m => m.Id == id);
         if (doctor == null)
         {
             return NotFound();
         }
-        Doctor = doctor;
+
+        Doctor = new DoctorModel
+        {
+            Id = doctor.Id,
+            Address = doctor.Address,
+            FirstName = doctor.FirstName,
+            LastName = doctor.LastName,
+            Dob = doctor.Dob,
+            Gender = doctor.Gender,
+            Services = doctor.Services.Select(x => x.Id).ToList()
+        };
+        
+        ViewData["Services"] = new SelectList(await _context.Services.ToListAsync(), "Id", "Name");
         return Page();
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see https://aka.ms/RazorPagesCRUD.
+
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
@@ -43,7 +65,21 @@ public class EditModel : PageModel
             return Page();
         }
 
-        _context.Attach(Doctor).State = EntityState.Modified;
+        var doctor = await _context.Doctors
+            .Include(x => x.Services)
+            .FirstOrDefaultAsync(x => x.Id == Doctor.Id);
+
+        if (doctor is null) return NotFound();
+        
+        doctor.Address = Doctor.Address;
+        doctor.FirstName = Doctor.FirstName;
+        doctor.LastName = Doctor.LastName;
+        doctor.Dob = Doctor.Dob;
+        doctor.Gender = Doctor.Gender;
+        doctor.Services.Clear();
+        
+        var services = _context.Services.Where(x => Doctor.Services.Contains(x.Id));
+        doctor.Services.AddRange(services);
 
         try
         {
@@ -55,10 +91,8 @@ public class EditModel : PageModel
             {
                 return NotFound();
             }
-            else
-            {
-                throw;
-            }
+
+            throw;
         }
 
         return RedirectToPage("./Index");

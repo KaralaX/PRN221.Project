@@ -1,6 +1,7 @@
 using PRN221.Project.Application;
 using PRN221.Project.Infrastructure;
 using PRN221.Project.Infrastructure.Persistence;
+using PRN221.Project.Infrastructure.VnPay.Services;
 using PRN221.WebUi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
         .AddInfrastructureServices(builder.Configuration)
         .AddWebUiServices();
 }
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 
 var app = builder.Build();
 {
